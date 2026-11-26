@@ -1,0 +1,16 @@
+{
+  "data_url": "https://kota-binatang-data.rangga20maret1998.workers.dev/data.json",
+  "instagram_url": "https://www.instagram.com/kotabinatang",
+  "mulai_tanggal": "2026-11-24",
+  "followers_awal": 0,
+  "saweria": 0,
+  "post_usulan": "",
+  "koin_per_rumah": 10000,
+  "nilai_koin": {
+    "follow": 500,
+    "like": 100,
+    "share": 1000,
+    "repost": 2000,
+    "saweria": 5000
+  }
+}
