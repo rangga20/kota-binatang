@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Kota Binatang · Live</title>
+<title>Kota Bhinneka · Kota Binatang Live</title>
 <meta name="description" content="Kota Binatang: setiap follower jadi satu warga binatang. Lihat pulau, warga, dan kas Koin kota secara langsung.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
@@ -65,6 +65,52 @@ ol li.kosong::before{display:none}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #muat{position:fixed;inset:0;z-index:9;background:#7FD3FF;display:grid;place-items:center;font-size:24px;font-weight:700;color:#fff;text-shadow:0 3px 0 #2B4A9A;transition:opacity .6s}
 #muat.hilang{opacity:0;pointer-events:none}
+.tombolKtp{display:block;width:100%;margin-top:12px;text-align:center;text-decoration:none;font:700 19px 'Fredoka';background:var(--kuning);color:var(--ink);border:4px solid var(--ink);border-radius:40px;box-shadow:0 5px 0 var(--ink);padding:11px;cursor:pointer}
+.tombolKtp:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}.tombolKtp:disabled{opacity:.6}
+#modal{position:fixed;inset:0;z-index:10;background:rgba(30,40,80,.45);display:none;align-items:center;justify-content:center;padding:12px}
+#modal.on{display:flex}
+#modal .kotak{position:relative;width:min(560px,100%);max-height:94vh;overflow-y:auto;padding:18px 20px 20px}
+#tutupModal{position:absolute;right:12px;top:10px;width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);background:#fff;font:700 18px 'Fredoka';cursor:pointer}
+.judulM{margin:2px 0 6px;font-size:24px}.kecilM{font-size:14px;color:#6A5E78;margin:4px 0 10px;line-height:1.4}
+#modal label{display:block;font-weight:600;margin:12px 0 6px}
+#namaKtp{width:100%;font:600 19px 'Fredoka';padding:10px 14px;border:3px solid var(--ink);border-radius:14px;background:var(--krem);color:var(--ink)}
+.susun{display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start}
+.kiri{position:sticky;top:0;text-align:center;background:#fff;z-index:1;padding-bottom:4px}
+#wadahPratinjau{width:200px;height:216px;border:3px solid var(--ink);border-radius:18px;background:linear-gradient(#BDE9FF,#FFF1D0);overflow:hidden;touch-action:none;cursor:grab}
+#pratinjau{width:200px!important;height:216px!important;display:block}
+.petunjuk{margin:0;font-size:12px}
+#modal .kotak{width:min(760px,100%)}
+.gridI{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px}
+#gridJenis{max-height:186px;overflow-y:auto;padding:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.gridW{display:flex;flex-wrap:wrap;gap:7px}
+.warna{width:34px;height:34px;border-radius:50%;border:3px solid var(--ink);cursor:pointer;font:700 9px 'Fredoka';color:var(--ink);padding:0}
+.warna.on{outline:3px solid var(--kuning);outline-offset:2px;transform:scale(1.1)}
+.jenis{font:600 11.5px 'Fredoka';color:var(--ink);background:#fff;border:2.5px solid var(--ink);border-radius:12px;padding:4px 2px;cursor:pointer;line-height:1.1}
+.jenis span{display:block;font-size:22px;line-height:1.15}.jenis.on{background:var(--kuning);box-shadow:0 3px 0 var(--ink)}
+@media (max-width:620px){.susun{grid-template-columns:1fr}.kiri{display:flex;gap:10px;align-items:center;text-align:left}#wadahPratinjau,#pratinjau{width:140px!important;height:150px!important}}
+#modal label.cek{font-weight:500;font-size:14px;display:flex;gap:8px;align-items:flex-start}
+#pesanKtp{margin-top:10px;font-weight:600;min-height:20px}#pesanKtp.salah{color:#D6334C}
+#kartu{width:100%;height:auto;display:block;margin-top:6px}
+.tombolKtp.hijau{background:#7ED957}
+#hud{display:none}
+body.jelajah #hud{display:block}
+body.jelajah #panel,body.jelajah #kam,body.jelajah #kepala{display:none}
+#lokasi{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:6;padding:8px 18px;font-weight:700;font-size:18px;white-space:nowrap}
+#bKeluar{position:fixed;right:16px;top:14px;z-index:6;padding:8px 16px;font:700 16px 'Fredoka';color:var(--ink);cursor:pointer}
+#petunjuk{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;padding:8px 16px;font-size:14px;font-weight:600;white-space:nowrap}
+#joystik,#bLompat{display:none}
+tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
+#teman{position:fixed;left:16px;top:14px;z-index:6;padding:8px 14px;font-weight:700;font-size:15px;max-width:40vw}
+#emote{position:fixed;right:16px;bottom:16px;z-index:6;display:flex;gap:8px}
+#emote button{width:54px;height:54px;border-radius:50%;background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);font-size:24px;cursor:pointer;touch-action:none}
+#emote button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+#nOnline{margin-top:8px;font-weight:700;color:#2E8B3E;text-align:center}
+#joystik{position:fixed;left:22px;bottom:26px;z-index:6;width:132px;height:132px;border-radius:50%;background:rgba(255,255,255,.45);border:4px solid var(--ink);touch-action:none}
+#tombolJoy{position:absolute;left:36px;top:36px;width:52px;height:52px;border-radius:50%;background:var(--kuning);border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);pointer-events:none}
+#bLompat{position:fixed;right:22px;bottom:34px;z-index:6;width:96px;height:96px;border-radius:50%;background:#7ED957;border:4px solid var(--ink);box-shadow:0 6px 0 var(--ink);font:700 16px/1.1 'Fredoka';color:var(--ink);touch-action:none}
+@media (pointer:coarse),(max-width:820px){#joystik,#bLompat{display:block}#petunjuk{display:none}#bKeluar{right:10px;top:10px;font-size:14px}#lokasi{left:10px;top:60px;transform:none;font-size:15px}#teman{top:108px;left:10px;font-size:13px;max-width:70vw}#emote{right:22px;bottom:140px;flex-direction:column}#emote button{width:50px;height:50px;font-size:22px}}
+@media (max-width:620px){#toast{white-space:normal;width:max-content;max-width:92vw;text-align:center;font-size:16px;top:64px}}
 @media (max-width:820px){
   #kepala{left:10px;top:10px;padding:8px 12px}#kepala h1{font-size:21px}
   #panel{left:8px;right:8px;top:auto;bottom:8px;width:auto;max-height:56vh;border-radius:22px 22px 18px 18px}
@@ -78,8 +124,8 @@ ol li.kosong::before{display:none}
 </head>
 <body>
 <div id="muat">Menyiapkan pulau…</div>
-<div id="kepala" class="kartu"><div><h1>Kota ??? <small>Kota Binatang · nama kota belum ditentukan</small></h1></div><span class="live"><i></i>LIVE</span></div>
-<div id="kam"><button data-kam="kota" class="on">Kota</button><button data-kam="warga">Warga</button><button data-kam="gunung">Gunung</button><button data-kam="pulau">Seluruh pulau</button></div>
+<div id="kepala" class="kartu"><div><h1>Kota Bhinneka <small>Pulau Nusantara · Kota Binatang</small></h1></div><span class="live"><i></i>LIVE</span></div>
+<div id="kam"><button data-kam="kota" class="on">Kota</button><button data-kam="dekat">Dekat</button><button data-kam="pantai">Pantai</button><button data-kam="gunung">Gunung</button><button data-kam="pulau">Seluruh pulau</button></div>
 <div id="panel" class="kartu">
   <button id="lipat">Data kota ▾</button>
   <div id="isi">
@@ -87,23 +133,66 @@ ol li.kosong::before{display:none}
     <div id="tunda" class="pita" style="display:none">Data terbaru sedang tertunda, angka di bawah adalah data terakhir.</div>
     <div class="angka">
       <div><b id="nWarga">0</b><span>Warga</span></div>
-      <div><b id="nRumah">0</b><span>Rumah</span></div>
-      <div class="kas"><b id="nKas">0</b><span>Kas kota (Koin)</span></div>
+      <div><b id="nKtp">0</b><span>Ber-KTP</span></div>
+      <div class="kas"><b id="nKas">0</b><span>Sisa kas (Koin)</span></div>
     </div>
     <div id="waktu"></div>
+    <button id="bKtp" class="tombolKtp">🪪 Buat KTP Warga</button>
+    <button id="bJalan" class="tombolKtp hijau" style="display:none">🐾 Jalan-jalan keliling pulau</button>
+    <div id="nOnline" style="display:none"></div>
     <h2>Dari mana Koin datang</h2>
     <table><tbody id="rinci"></tbody></table>
-    <h2>Pembangunan</h2>
-    <div class="bar"><div id="barIsi"></div></div><div id="barTeks"></div>
-    <h2>Usulan nama kota teratas</h2>
+    <h2>Pengeluaran kota</h2>
+    <table><tbody id="keluar"></tbody></table>
+    <h2>Usulan bangunan berikutnya</h2>
     <ol id="usulan"></ol>
-    <h2>Warga terbaru</h2>
+    <h2>Warga ber-KTP terbaru</h2>
     <div id="wargaBaru"></div><div id="lebih"></div>
     <a id="ig" href="#" target="_blank" rel="noopener" style="display:none">+ Follow &amp; jadi warga</a>
-    <p class="catatan">1 follower = 1 warga binatang acak. Koin adalah poin permainan fiktif, <b>bukan uang dan tidak bisa ditukar ke Rupiah</b>. Usulan nama diambil dari komentar dengan like terbanyak. Geser untuk memutar pulau, cubit atau scroll untuk zoom.</p>
+    <p class="catatan">1 follower = 1 warga binatang. Buat KTP untuk memilih binatangmu sendiri dan menampilkan namamu di Kota Bhinneka. Koin adalah poin permainan fiktif, <b>bukan uang dan tidak bisa ditukar ke Rupiah</b>. Usulan bangunan berikutnya diambil dari komentar dengan like terbanyak. Geser untuk memutar pulau, cubit atau scroll untuk zoom.</p>
   </div>
 </div>
 <div id="toast"></div>
+<div id="hud">
+  <div id="lokasi" class="kartu">🏖️ Pantai</div>
+  <button id="bKeluar" class="kartu">✕ Selesai jalan-jalan</button>
+  <div id="teman" class="kartu">👥 Menyambung…</div>
+  <div id="emote"><button data-e="lambai" title="Lambai (E)">👋</button><button data-e="hati" title="Hati (2)">❤️</button><button data-e="tawa" title="Tertawa (3)">😄</button></div>
+  <div id="petunjuk" class="kartu">W A S D / panah = jalan · Shift = lari · Spasi = lompat · geser mouse = putar kamera</div>
+  <div id="joystik"><div id="tombolJoy"></div></div>
+  <button id="bLompat">⤴<br>Lompat</button>
+</div>
+<div id="modal"><div class="kotak kartu">
+  <button id="tutupModal" aria-label="Tutup">✕</button>
+  <div id="formKtp">
+    <h2 class="judulM">🪪 Buat KTP Warga</h2>
+    <p class="kecilM">KTP ini <b>fiktif</b>, khusus permainan Kota Binatang. Jangan isi nama lengkap, NIK asli, alamat, atau data pribadi lain.</p>
+    <div class="susun">
+      <div class="kiri"><div id="wadahPratinjau"></div><div id="namaJenis" class="kecilM"></div><div class="kecilM petunjuk">↔ geser untuk memutar</div></div>
+      <div class="kanan">
+        <label for="namaKtp">Nama panggilan</label>
+        <input id="namaKtp" maxlength="20" autocomplete="off" placeholder="misalnya: Budi">
+        <label>Jenis kelamin</label><div id="gridKelamin" class="grid2"></div>
+        <label>Binatang</label><div id="gridJenis" class="gridI"></div>
+        <label>Warna bulu</label><div id="gridWarna" class="gridW"></div>
+        <label>Rambut</label><div id="gridRambut" class="gridI"></div>
+        <label>Warna rambut</label><div id="gridWarnaRambut" class="gridW"></div>
+        <label>Aksesori <span id="hitAks" class="kecilM"></span></label><div id="gridAksesori" class="gridI"></div>
+      </div>
+    </div>
+    <label class="cek"><input type="checkbox" id="setuju"> Aku sudah follow dan setuju nama panggilanku tampil di website.</label>
+    <button id="kirimKtp" class="tombolKtp">Buat KTP-ku</button>
+    <div id="pesanKtp"></div>
+  </div>
+  <div id="hasilKtp" style="display:none">
+    <h2 class="judulM">🎉 Selamat datang, warga!</h2>
+    <p class="kecilM">KTP-mu: <b id="ktpku"></b>. Binatangmu sekarang tinggal di Kota Bhinneka dengan papan nama.</p>
+    <canvas id="kartu" width="1000" height="620"></canvas>
+    <a id="unduhKtp" class="tombolKtp" href="#">⬇ Simpan gambar KTP</a>
+    <button id="bJalan2" class="tombolKtp hijau" style="display:none">🐾 Jalan-jalan dengan binatangku</button>
+    <p class="kecilM">Pamerkan KTP-mu di story dan tag akun Kota Binatang!</p>
+  </div>
+</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="app.js"></script>
 </body>

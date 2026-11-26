@@ -12,5 +12,23 @@
     "share": 1000,
     "repost": 2000,
     "saweria": 5000
-  }
+  },
+  "main_url": "https://kota-binatang-main.rangga20maret1998.workers.dev",
+  "pengeluaran": [
+    {
+      "tanggal": "2026-11-26",
+      "nama": "Gerbang & plang Kota Bhinneka",
+      "koin": 25000
+    },
+    {
+      "tanggal": "2026-11-26",
+      "nama": "Lumbung makanan",
+      "koin": 60000
+    },
+    {
+      "tanggal": "2026-11-26",
+      "nama": "Tenda warga & api unggun",
+      "koin": 55000
+    }
+  ]
 }
