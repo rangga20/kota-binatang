@@ -1454,6 +1454,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) { if 
 tampilTangkapan();
 
 /* ================= MITRA / SPONSOR UMKM: papan reklame & kios di pulau ================= */
+/* SAAT INI NONAKTIF (keputusan pemilik 28 Nov: tunggu kota berkembang & follower banyak). Nyalakan dengan config.json → "iklan_aktif": true */
 /* Data dari config.json → "sponsor": [{slot, nama, slogan, warna, link}] . slot: pantai | gerbang | lumbung | kebun | kios1 | kios2
    Semua iklan berlabel IKLAN. Slot kosong = "Ruang iklan tersedia · DM Instagram". Nama & slogan disaring sensorTeks. */
 const SLOT_IKLAN = [
@@ -1487,10 +1488,11 @@ function buatKios(slot) { const g = new THREE.Group(), kayu = MAT('#B5652A');
   muka.position.set(0, 4.05, -.51); g.add(muka);
   [[-1.1, '#FF8A2A'], [-.4, '#7ED957'], [.4, '#FFD447'], [1.1, '#FF8AB0']].forEach(([x, w]) => bb(.22, MAT(w), x, 1.5, .3, 1, .8, 1, g, 1.08));   /* dagangan */
   return {g, muka, kena: [papan, muka]}; }
-SLOT_IKLAN.forEach(s => { const b = s.jenis === 'kios' ? buatKios(s) : buatPapan(s); b.g.position.set(s.x, tanah(s.x, s.z) - .05, s.z);
+function bangunIklan() { if (IKLAN.length) return; SLOT_IKLAN.forEach(s => { const b = s.jenis === 'kios' ? buatKios(s) : buatPapan(s); b.g.position.set(s.x, tanah(s.x, s.z) - .05, s.z);
   b.g.rotation.y = Math.atan2(s.hadap[0] - s.x, s.hadap[1] - s.z); scene.add(b.g); BENDA.push([s.x, s.z, s.jenis === 'kios' ? 2.1 : 2.9]);
-  IKLAN.push({slot: s, g: b.g, muka: b.muka, kena: b.kena, sp: null, kios: s.jenis === 'kios'}); });
-function terapkanIklan() { const daftar = (CFG.sponsor || []).filter(sp => sp && sp.nama);
+  IKLAN.push({slot: s, g: b.g, muka: b.muka, kena: b.kena, sp: null, kios: s.jenis === 'kios'}); }); }
+function terapkanIklan() { const aktif = !!CFG.iklan_aktif; $('#bagianMitra').style.display = aktif ? '' : 'none'; if (!aktif) return; bangunIklan();
+  const daftar = (CFG.sponsor || []).filter(sp => sp && sp.nama);
   IKLAN.forEach(I => { const sp = daftar.find(x => x.slot === I.slot.id) || null, kunci = JSON.stringify(sp) + igHandle(); if (I._k === kunci) return; I._k = kunci; I.sp = sp;
     if (I.muka.material.map) I.muka.material.map.dispose(); I.muka.material.map = teksIklan(sp, I.kios ? 1024 : 1024, I.kios ? 256 : 512, I.kios); I.muka.material.needsUpdate = true; });
   const w = $('#mitra'); w.innerHTML = ''; daftar.forEach(sp => { const a = document.createElement(sp.link ? 'a' : 'span'); a.className = 'chip mitraChip';
