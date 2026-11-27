@@ -858,7 +858,11 @@ function isiSawer(d, h) { const T = CFG.target || {}, tk = Math.max(1, +T.koin |
   const P = d.penyokong || [], w = $('#penyokong'); w.innerHTML = ''; $('#judulPenyokong').style.display = P.length ? '' : 'none';
   P.forEach(p => { const el = document.createElement('span'); el.className = 'chip sokong'; el.innerHTML = `${ikon('hati')} ${escHtml(p.nama)} · ${fmt(p.rp * (CFG.nilai_koin.saweria_rp ?? 1))} Koin`; w.appendChild(el); });
   const n = d.saweria_n || 0; if (SAWER_N >= 0 && n > SAWER_N && P[0]) { toast(`Terima kasih ${P[0].nama}! +${fmt(P[0].rp * (CFG.nilai_koin.saweria_rp ?? 1))} Koin untuk kas kota`); kembangApi(); }
-  SAWER_N = n; }
+  SAWER_N = n;
+  /* kiriman tes dari dashboard Saweria: tampil bertanda (tes), tidak menambah kas */
+  const TS = d.saweria_tes; if (TS) { const el = document.createElement('span'); el.className = 'chip sokong tes'; el.innerHTML = `${ikon('hati')} ${escHtml(TS.nama)} · ${fmt(TS.rp)} Koin (tes)`; w.prepend(el); $('#judulPenyokong').style.display = '';
+    if (SAWER_TES !== TS.t) { if (SAWER_TES !== null) { toast('Tes Saweria berhasil! (tidak masuk kas)'); kembangApi(); } SAWER_TES = TS.t; } } else if (SAWER_TES === null) SAWER_TES = ''; }
+let SAWER_TES = null;   /* null = belum pernah dimuat (tes lama tidak dirayakan ulang saat halaman dibuka) */
 function kembangApi() { bunyi('ktp'); const [cx, cz] = PUSAT_KOTA, warna = ['#FF4D6A', '#FFD447', '#7ED957', '#3C8CFF', '#C69CFF', '#FF9A3C'];
   for (let k = 0; k < 6; k++) { const x0 = cx + (Math.random() - .5) * 24, z0 = cz + (Math.random() - .5) * 18, y0 = tinggi(x0, z0) + 18 + Math.random() * 10, tunda = k * .45, w = warna[k % 6];
     for (let i = 0; i < 22; i++) { const a = i / 22 * 6.283, b = (Math.random() - .5) * 2, s = spriteEmoji('✦', w, 200), v = 6 + Math.random() * 3;
