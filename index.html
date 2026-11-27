@@ -101,15 +101,55 @@ body.jelajah #panel,body.jelajah #kam,body.jelajah #kepala{display:none}
 #petunjuk{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;padding:8px 16px;font-size:14px;font-weight:600;white-space:nowrap}
 #joystik,#bLompat{display:none}
 tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
-#teman{position:fixed;left:16px;top:14px;z-index:6;padding:8px 14px;font-weight:700;font-size:15px;max-width:40vw}
-#emote{position:fixed;right:16px;bottom:16px;z-index:6;display:flex;gap:8px}
-#emote button{width:54px;height:54px;border-radius:50%;background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);font-size:24px;cursor:pointer;touch-action:none}
+/* ---- jalan-jalan: obrolan, emote, pancing, zoom ---- */
+#emote{position:fixed;right:16px;bottom:16px;z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#emote .baki{display:none;grid-template-columns:repeat(4,54px);gap:8px;background:rgba(255,255,255,.9);border:4px solid var(--ink);border-radius:22px;padding:8px;box-shadow:0 5px 0 var(--ink)}
+#emote.buka .baki{display:grid}
+#emote button{width:54px;height:54px;border-radius:50%;background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);font-size:24px;cursor:pointer;touch-action:none;padding:0}
+#emote .baki button{border-width:3px;box-shadow:0 3px 0 var(--ink);font-size:22px;position:relative}
+#emote .baki button i{position:absolute;right:-2px;bottom:-4px;font:700 11px 'Fredoka';font-style:normal;background:var(--kuning);border:2px solid var(--ink);border-radius:8px;padding:0 4px}
 #emote button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.barisTombol{display:flex;gap:8px}
+#bEmote{background:var(--kuning)!important}#bPancing{background:#BDE9FF!important}
+#zoom{position:fixed;right:16px;top:70px;z-index:6;display:flex;flex-direction:column;gap:6px}
+#zoom button{width:44px;height:44px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);font:700 22px 'Fredoka';color:var(--ink);cursor:pointer;padding:0}
+#tangkap{position:fixed;left:16px;top:62px;z-index:6;padding:6px 12px;font-weight:700;font-size:14px}
+#seru{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:7;background:#FF4D6A;color:#fff;border:4px solid var(--ink);border-radius:30px;box-shadow:0 6px 0 var(--ink);padding:10px 22px;font-weight:700;font-size:22px;animation:getar .25s infinite;pointer-events:none;white-space:nowrap}
+@keyframes getar{50%{transform:translate(-50%,-54%) rotate(-2deg)}}
+#obrol{position:fixed;left:16px;bottom:62px;z-index:6;width:360px;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+#logObrol{max-height:170px;overflow-y:auto;font-size:14px;line-height:1.35;display:flex;flex-direction:column;gap:3px;pointer-events:auto;scrollbar-width:thin;
+  -webkit-mask-image:linear-gradient(transparent,#000 22%);mask-image:linear-gradient(transparent,#000 22%)}
+#logObrol div{background:rgba(255,255,255,.88);border:2px solid var(--ink);border-radius:12px;padding:3px 10px;width:fit-content;max-width:100%;overflow-wrap:anywhere}
+#logObrol div.dekat{background:#E6FFE0}#logObrol div.sistem{background:#FFF1B8;font-weight:600;font-size:13px}
+#obrol:not(.buka) #logObrol{max-height:96px}
+#obrol:not(.buka) #formObrol,#obrol:not(.buka) #ruang{display:none}
+#ruang{display:flex;gap:6px;pointer-events:auto}
+#ruang button{font:700 13px 'Fredoka';background:#fff;border:3px solid var(--ink);border-radius:20px;padding:4px 12px;cursor:pointer;color:var(--ink)}
+#ruang button.on{background:var(--kuning)}
+#formObrol{display:flex;gap:6px;pointer-events:auto}
+#isiObrol{flex:1;min-width:0;font:600 16px 'Fredoka';padding:8px 12px;border:3px solid var(--ink);border-radius:16px;background:#fff;color:var(--ink)}
+#formObrol button{font:700 15px 'Fredoka';background:var(--kuning);border:3px solid var(--ink);border-radius:16px;padding:0 14px;cursor:pointer;color:var(--ink)}
+#bObrol{position:fixed;left:16px;bottom:16px;z-index:6;font:700 15px 'Fredoka';background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:30px;padding:7px 14px;box-shadow:0 4px 0 var(--ink);cursor:pointer}
+#bObrol.baru::after{content:'';display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF4D6A;margin-left:6px;border:2px solid var(--ink)}
+#feedObrol{font-size:13.5px;line-height:1.4;display:flex;flex-direction:column;gap:4px}
+#feedObrol div{background:var(--krem);border-radius:10px;padding:4px 9px;overflow-wrap:anywhere}
+#nOnline.klik{cursor:pointer;text-decoration:underline dotted}
+.kecilAbu{font-size:12px;color:#7A6E88;margin-top:4px}
+@media (pointer:coarse),(max-width:820px){
+  #obrol{left:10px;right:10px;width:auto;top:150px;bottom:auto}#obrol:not(.buka) #logObrol{max-height:74px;font-size:12.5px}#obrol.buka #logObrol{max-height:30vh}
+  #bObrol{left:auto;right:10px;top:56px;bottom:auto;font-size:14px;padding:5px 12px}
+  #zoom{top:auto;bottom:230px;right:auto;left:22px;flex-direction:row}#zoom button{width:40px;height:40px}
+  #tangkap{top:104px;right:10px;left:auto;font-size:13px;padding:4px 10px}#tangkap .rinci{display:none}
+  #teman{max-width:calc(100vw - 120px)}
+  #emote{right:22px;bottom:140px}#emote .baki{grid-template-columns:repeat(4,46px)}#emote .baki button{width:46px;height:46px;font-size:20px}#emote button{width:50px;height:50px;font-size:22px}
+  #emote .baki button i{display:none}}
+
+#teman{position:fixed;left:16px;top:14px;z-index:6;padding:8px 14px;font-weight:700;font-size:15px;max-width:40vw}
 #nOnline{margin-top:8px;font-weight:700;color:#2E8B3E;text-align:center}
 #joystik{position:fixed;left:22px;bottom:26px;z-index:6;width:132px;height:132px;border-radius:50%;background:rgba(255,255,255,.45);border:4px solid var(--ink);touch-action:none}
 #tombolJoy{position:absolute;left:36px;top:36px;width:52px;height:52px;border-radius:50%;background:var(--kuning);border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);pointer-events:none}
 #bLompat{position:fixed;right:22px;bottom:34px;z-index:6;width:96px;height:96px;border-radius:50%;background:#7ED957;border:4px solid var(--ink);box-shadow:0 6px 0 var(--ink);font:700 16px/1.1 'Fredoka';color:var(--ink);touch-action:none}
-@media (pointer:coarse),(max-width:820px){#joystik,#bLompat{display:block}#petunjuk{display:none}#bKeluar{right:10px;top:10px;font-size:14px}#lokasi{left:10px;top:60px;transform:none;font-size:15px}#teman{top:108px;left:10px;font-size:13px;max-width:70vw}#emote{right:22px;bottom:140px;flex-direction:column}#emote button{width:50px;height:50px;font-size:22px}}
+@media (pointer:coarse),(max-width:820px){#joystik,#bLompat{display:block}#petunjuk{display:none}#bKeluar{right:10px;top:10px;font-size:14px}#lokasi{left:10px;top:60px;transform:none;font-size:15px}#teman{top:108px;left:10px;font-size:13px;max-width:70vw}}
 @media (max-width:620px){#toast{white-space:normal;width:max-content;max-width:92vw;text-align:center;font-size:16px;top:64px}}
 @media (max-width:820px){
   #kepala{left:10px;top:10px;padding:8px 12px}#kepala h1{font-size:21px}
@@ -140,6 +180,8 @@ tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
     <button id="bKtp" class="tombolKtp">🪪 Buat KTP Warga</button>
     <button id="bJalan" class="tombolKtp hijau" style="display:none">🐾 Jalan-jalan keliling pulau</button>
     <div id="nOnline" style="display:none"></div>
+    <h2 id="feedJudul" style="display:none">💬 Obrolan warga</h2>
+    <div id="feedObrol"></div>
     <h2>Dari mana Koin datang</h2>
     <table><tbody id="rinci"></tbody></table>
     <h2>Pengeluaran kota</h2>
@@ -157,8 +199,18 @@ tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
   <div id="lokasi" class="kartu">🏖️ Pantai</div>
   <button id="bKeluar" class="kartu">✕ Selesai jalan-jalan</button>
   <div id="teman" class="kartu">👥 Menyambung…</div>
-  <div id="emote"><button data-e="lambai" title="Lambai (E)">👋</button><button data-e="hati" title="Hati (2)">❤️</button><button data-e="tawa" title="Tertawa (3)">😄</button></div>
-  <div id="petunjuk" class="kartu">W A S D / panah = jalan · Shift = lari · Spasi = lompat · geser mouse = putar kamera</div>
+  <div id="emote">
+    <div class="baki"><button data-e="lambai" title="Melambai">👋<i>1</i></button><button data-e="hati" title="Sayang">❤️<i>2</i></button><button data-e="tawa" title="Tertawa">😄<i>3</i></button><button data-e="tepuk" title="Tepuk tangan">👏<i>4</i></button>
+      <button data-e="joget" title="Joget">💃<i>5</i></button><button data-e="duduk" title="Duduk">🪑<i>6</i></button><button data-e="sedih" title="Sedih">😢<i>7</i></button><button data-e="lompat" title="Lompat girang">⭐</button></div>
+    <div class="barisTombol"><button id="bPancing" title="Memancing (F)">🎣</button><button id="bEmote" title="Emote">😊</button></div>
+  </div>
+  <div id="zoom"><button id="bZoomDekat" title="Kamera mendekat (+)">+</button><button id="bZoomJauh" title="Kamera menjauh (−)">−</button></div>
+  <div id="tangkap" class="kartu" style="display:none"></div>
+  <div id="seru" style="display:none">❗ Umpan dimakan! Tekan F / 🎣</div>
+  <div id="obrol"><div id="logObrol"></div><div id="ruang"><button data-r="g" class="on">🌍 Global</button><button data-r="d">📍 Dekat</button></div>
+    <form id="formObrol" autocomplete="off"><input id="isiObrol" maxlength="120" placeholder="Tulis untuk semua warga…" enterkeyhint="send"><button>Kirim</button></form></div>
+  <button id="bObrol">💬 Obrolan</button>
+  <div id="petunjuk" class="kartu">WASD = jalan · Shift = lari · Spasi = lompat · F = mancing · Enter = ngobrol · 1–7 = emote · scroll / + − = jarak kamera</div>
   <div id="joystik"><div id="tombolJoy"></div></div>
   <button id="bLompat">⤴<br>Lompat</button>
 </div>
