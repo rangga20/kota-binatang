@@ -810,7 +810,7 @@ $('#kirimKtp').onclick = async () => { const nama = $('#namaKtp').value.trim().r
     if (!j.ok) { psn.className = 'salah'; psn.textContent = j.pesan || 'Gagal membuat KTP.'; return; }
     psn.textContent = ''; $('#bKtp').textContent = '🪪 Lihat KTP-ku'; localStorage.setItem(KTP_SIMPAN, JSON.stringify(j.ktp));
     $('#formKtp').style.display = 'none'; $('#hasilKtp').style.display = ''; gambarKartu(j.ktp);
-    toast(`Selamat datang, ${j.ktp.nama}! 🪪`); tampilTombolJalan(); muat(false); }
+    toast(`Selamat datang, ${j.ktp.nama}! 🪪`); bunyi('ktp'); tampilTombolJalan(); muat(false); }
   catch (e) { psn.className = 'salah'; psn.textContent = 'Gagal terhubung. Coba lagi sebentar lagi.'; }
   finally { $('#kirimKtp').disabled = false; } };
 const opsiKtp = k => ({kelamin: k.kelamin || '', warna: k.warna || '', rambut: k.rambut || 'none', warnaRambut: k.warnaRambut || '', aksesori: k.aksesori || []});
@@ -900,7 +900,7 @@ addEventListener('keyup', e => { JL.kunci[e.code] = false; });
 addEventListener('blur', () => { JL.kunci = {}; });
 /* lompat: dulu tidak pernah jalan karena binatang berdiri sedikit DI ATAS tanah (lantai = tanah + .14×skala) */
 function diLantai() { return JL.y <= tanahJalan(JL.x, JL.z) + .14 * SKALA_WARGA + .06; }
-function lompat() { if (!JL.aktif || PANCING.fase) return; if (JL.s === 1) { JL.vy = 5; return; } if (diLantai()) JL.vy = 10.5; }
+function lompat() { if (!JL.aktif || PANCING.fase) return; if (JL.s === 1) { JL.vy = 5; bunyi('renang'); return; } if (diLantai()) { JL.vy = 10.5; bunyi('lompat'); } }
 function aturZoom(arah) { JL.jarak = clamp(JL.jarak * (arah > 0 ? 1.35 : 1 / 1.35), 4, JARAK_MAKS); }
 $('#bZoomJauh').addEventListener('click', () => aturZoom(1)); $('#bZoomDekat').addEventListener('click', () => aturZoom(-1));
 $('#bPancing').addEventListener('pointerdown', e => { e.preventDefault(); tekanMancing(); });
@@ -967,7 +967,7 @@ function langkahJelajah(t, dt) { const K = JL.kunci;
   if (air - dasar > DALAM_RENANG + (JL.s === 1 ? -.08 : .08)) {   /* air cukup dalam: mengapung (sedikit histeresis supaya tidak berkedip) */
     if (JL.s !== 1) { JL.s = 1; if (JL.vy < -2) JL.vy *= .3; }
     JL.vy += (apung - JL.y) * 30 * dt - JL.vy * 4 * dt; JL.y += JL.vy * dt; if (JL.y < dasar - .3) { JL.y = dasar - .3; JL.vy = 0; } }
-  else { if (JL.s === 1) JL.s = 0; JL.vy -= 26 * dt; JL.y += JL.vy * dt; if (JL.y < lantai) { JL.y = lantai; JL.vy = 0; } }
+  else { if (JL.s === 1) JL.s = 0; JL.vy -= 26 * dt; JL.y += JL.vy * dt; if (JL.y < lantai) { if (JL.vy < -7) bunyi('mendarat'); JL.y = lantai; JL.vy = 0; } }
   JL.l = JL.laju; JL.g.position.set(JL.x, JL.y, JL.z); JL.g.rotation.y = JL.arah;
   langkahMancing(dt); poseKarakter(JL, t, dt, JL.s !== 1 && JL.y > lantai + .05);
   /* kamera mengikuti dari belakang */
@@ -1063,6 +1063,7 @@ function awanSedih(p) { const grp = new THREE.Group(), abu = MAT('#9AA6B8', {tra
 /* ---------- emote: badan ikut bergerak ---------- */
 const EMOTE_DUR = {lambai: 2.6, hati: 2.6, tawa: 2.4, tepuk: 2.4, joget: 4.2, duduk: 30, sedih: 3, lompat: 1.2};
 function mulaiEmote(p, jenis) { if (!EMOTE_DUR[jenis]) return; p.em = {j: jenis, T: 0, dur: EMOTE_DUR[jenis], tepuk: 0};
+  const sb = {lambai: 'pop', hati: 'hati', tawa: 'tawa', joget: 'joget', duduk: 'duduk', sedih: 'sedih', lompat: 'bintang'}[jenis]; if (sb) bunyiDari(p, sb);
   if (jenis === 'hati') hatiMelayang(p); else if (jenis === 'tawa') teksMelayang(p, 'Ha!', '#FFD447', 3, 2, 1.4);
   else if (jenis === 'joget') teksMelayang(p, '♪', '#7ED957', 5, 3.2, 2.2); else if (jenis === 'sedih') awanSedih(p);
   else if (jenis === 'lompat') teksMelayang(p, '★', '#FFD447', 3, 1.6, 1); }
@@ -1073,7 +1074,7 @@ function poseEmote(p, u, t, dt) { const e = p.em; if (!e) return false; e.T += d
   else if (e.j === 'hati') { mix(L, -1.25, 0, .75); mix(R, -1.25, 0, -.75); u.kep.rotation.z = Math.sin(k * 2.4) * .2 * mulus; u.B.rotation.z = Math.sin(k * 2.4) * .07 * mulus; u.B.position.y = Math.abs(Math.sin(k * 4.8)) * .06; }
   else if (e.j === 'tawa') { mix(L, -.7, 0, .55); mix(R, -.7, 0, -.55); u.kep.rotation.x = (-.32 + Math.sin(k * 22) * .07) * mulus; u.B.rotation.x = -.12 * mulus; u.B.position.y = Math.abs(Math.sin(k * 22)) * .07 * mulus; }
   else if (e.j === 'tepuk') { const c = Math.sin(k * 15); mix(L, -1.35, 0, .2 + c * .32); mix(R, -1.35, 0, -.2 - c * .32); u.B.position.y = Math.abs(c) * .04;
-    if (c > .97 && k - e.tepuk > .3) { e.tepuk = k; const g = p.g, a = g.rotation.y, s = spriteEmoji('✦', '#FFFFFF', 200), x = g.position.x + Math.sin(a) * 1.5, z = g.position.z + Math.cos(a) * 1.5, y = g.position.y + 2.2;
+    if (c > .97 && k - e.tepuk > .3) { e.tepuk = k; bunyiDari(p, 'tepuk'); const g = p.g, a = g.rotation.y, s = spriteEmoji('✦', '#FFFFFF', 200), x = g.position.x + Math.sin(a) * 1.5, z = g.position.z + Math.cos(a) * 1.5, y = g.position.y + 2.2;
       tambahEfek(s, .35, (o, q) => { o.position.set(x, y, z); o.scale.setScalar(.4 + q * 1.1); o.material.opacity = 1 - q; }); } }
   else if (e.j === 'joget') { mix(L, -.2, 0, -2.3 + Math.sin(k * 8) * .6); mix(R, -.2, 0, 2.3 + Math.sin(k * 8 + Math.PI) * .6); u.B.rotation.z = Math.sin(k * 8) * .22 * mulus;
     u.B.rotation.y = Math.sin(k * 4) * .55 * mulus; u.B.position.y = Math.abs(Math.sin(k * 8)) * .25 * mulus; u.kep.rotation.z = -Math.sin(k * 8) * .15 * mulus; }
@@ -1101,8 +1102,8 @@ function poseKarakter(p, t, dt, diUdara) { const u = p.g.userData, jalan = Math.
   if (p.s !== 1 || !p.em || p.em.j === 'lambai' || p.em.j === 'hati' || p.em.j === 'sedih') poseEmote(p, u, t, dt);
   aturAlat(p, t);
   if (p.ob) { p.ob.T -= dt; const s = clamp(Math.min((6.5 - p.ob.T) * 6, p.ob.T * 3)); p.ob.spr.scale.set(p.ob.w * s, p.ob.h * s, 1); if (p.ob.T <= 0) { p.g.remove(p.ob.spr); p.ob.spr.material.map.dispose(); p.ob.spr.material.dispose(); p.ob = null; } }
-  if (p.s === 1 && p.l > 1.5) { p._pc = (p._pc || 0) - dt; if (p._pc <= 0) { p._pc = .28; const a = p.g.rotation.y; percik(p.g.position.x + Math.sin(a) * .9, airDi(p.g.position.x, p.g.position.z, t), p.g.position.z + Math.cos(a) * .9, .8); } }
-  if ((p.s === 1) !== !!p._diAir) { p._diAir = p.s === 1; if (p._diAir) percik(p.g.position.x, airDi(p.g.position.x, p.g.position.z, t), p.g.position.z, 1.8); } }
+  if (p.s === 1 && p.l > 1.5) { p._pc = (p._pc || 0) - dt; if (p._pc <= 0) { p._pc = .28; if (p === JL || Math.random() < .5) bunyiDari(p, 'renang'); const a = p.g.rotation.y; percik(p.g.position.x + Math.sin(a) * .9, airDi(p.g.position.x, p.g.position.z, t), p.g.position.z + Math.cos(a) * .9, .8); } }
+  if ((p.s === 1) !== !!p._diAir) { p._diAir = p.s === 1; if (p._diAir) bunyiDari(p, 'cebur'); if (p._diAir) percik(p.g.position.x, airDi(p.g.position.x, p.g.position.z, t), p.g.position.z, 1.8); } }
 
 /* ---------- gelembung obrolan di atas kepala ---------- */
 function gelembungObrol(p, teks) { if (!p || !p.g) return;
@@ -1117,7 +1118,7 @@ function gelembungObrol(p, teks) { if (!p || !p.g) return;
   x.fillStyle = '#2B2238'; x.textAlign = 'center'; x.textBaseline = 'middle'; baris.slice(0, n).forEach((s, i) => x.fillText(s, 256, y0 + 17 + 23 + i * 46));
   const tx = new THREE.CanvasTexture(c); tx.encoding = THREE.sRGBEncoding;
   const spr = new THREE.Sprite(new THREE.SpriteMaterial({map: tx, transparent: true, depthWrite: false})); spr.position.y = p.g.userData.atas + .95; spr.renderOrder = 5;
-  p.g.add(spr); p.ob = {spr, T: 6.5, w: 2.8, h: 1.4}; }
+  p.g.add(spr); p.ob = {spr, T: 6.5, w: 2.8, h: 1.4}; bunyiDari(p, 'pesan'); }
 
 /* ---------- memancing ---------- */
 const IKAN_JENIS = [   /* b = bobot peluang, uk = ukuran (cm) bila ikan; e = emoji bila bukan ikan */
@@ -1152,7 +1153,7 @@ function aturAlat(p, t) { const pakai = p.s === 2 || p.s === 3;
   for (let i = 0; i < 16; i++) { const f = i / 15; P.setXYZ(i, lerp(tip.x, pel.x, f), lerp(tip.y, pel.y, f) - Math.sin(f * Math.PI) * kendur * (p.makan ? .2 : 1), lerp(tip.z, pel.z, f)); }
   P.needsUpdate = true; }
 const _vA = V(0, 0, 0);
-function pamerIkan(p, i) { const m = modelIkan(i); m.position.set(0, p.g.userData.atas + 1.45, .2);
+function pamerIkan(p, i) { const m = modelIkan(i); bunyiDari(p, 'dapat', !!(IKAN_JENIS[i] || {}).langka); m.position.set(0, p.g.userData.atas + 1.45, .2);
   tambahEfek(m, 2.4, (o, k) => { const s = Math.sin(Math.min(1, k * 6) * Math.PI / 2) / SKALA_WARGA * 2; if (o.isSprite) o.scale.set(s * 1.1, s * 1.1, 1); else { o.scale.setScalar(s); o.rotation.z = Math.sin(k * 30) * .3 * (1 - k); o.rotation.y = Math.PI / 2; }
     o.position.y = p.g.userData.atas + 1.45 + Math.sin(k * 6) * .08; }, p.g); }
 
@@ -1168,15 +1169,15 @@ function tekanMancing() { if (!JL.aktif) return;
     if (JL.y > tanahJalan(JL.x, JL.z) + .14 * SKALA_WARGA + .1) return;
     let a = null; for (const d of [0, .3, -.3, .6, -.6, .9, -.9, 1.3, -1.3, 1.8, -1.8, 2.4, -2.4, Math.PI]) if (airDepan(JL.x, JL.z, JL.arah + d)) { a = JL.arah + d; break; }
     if (a === null) { toast('Cari tepi pantai dulu, lalu hadap ke laut 🌊🎣'); return; }
-    JL.arah = a; JL.kamYaw = a; PANCING.fase = 'lempar'; PANCING.T = 0; JL.s = 2; JL.lempar = 0; JL.em = null; return; }
-  if (PANCING.fase === 'makan') { PANCING.fase = 'tarik'; PANCING.T = 0; JL.makan = false; PANCING.ikan = pilihIkan(); return; }
+    JL.arah = a; JL.kamYaw = a; bunyi('lempar'); PANCING.fase = 'lempar'; PANCING.T = 0; JL.s = 2; JL.lempar = 0; JL.em = null; return; }
+  if (PANCING.fase === 'makan') { bunyi('tarik'); PANCING.fase = 'tarik'; PANCING.T = 0; JL.makan = false; PANCING.ikan = pilihIkan(); return; }
   if (PANCING.fase === 'lempar' || PANCING.fase === 'tunggu') berhentiMancing('Pancing digulung lagi.'); }
 function berhentiMancing(pesan) { PANCING.fase = ''; JL.s = 0; JL.makan = false; JL.tarikan = 0; JL.lempar = undefined; if (pesan) toast(pesan); $('#seru').style.display = 'none'; }
 function langkahMancing(dt) { if (!PANCING.fase) return; PANCING.T += dt; const P = PANCING;
   if (P.fase === 'lempar') { JL.tarikan = P.T < .35 ? -P.T * 2.2 : Math.max(0, -.77 + (P.T - .35) * 5); JL.lempar = clamp((P.T - .35) / .55);
-    if (P.T > .9) { P.fase = 'tunggu'; P.T = 0; P.tunggu = 2.5 + Math.random() * 5; JL.tarikan = 0; JL.lempar = undefined; const a = JL.arah; percik(JL.x + Math.sin(a) * 7, airDi(JL.x + Math.sin(a) * 7, JL.z + Math.cos(a) * 7, tAnim), JL.z + Math.cos(a) * 7, .7); } }
-  else if (P.fase === 'tunggu' && P.T > P.tunggu) { P.fase = 'makan'; P.T = 0; JL.makan = true; $('#seru').style.display = ''; }
-  else if (P.fase === 'makan' && P.T > 1.7) { P.fase = 'tunggu'; P.T = 0; P.tunggu = 2 + Math.random() * 4; JL.makan = false; $('#seru').style.display = 'none'; toast('Yah, ikannya kabur! Tunggu umpan dimakan lagi 🐟'); }
+    if (P.T > .9) { bunyi('plung'); P.fase = 'tunggu'; P.T = 0; P.tunggu = 2.5 + Math.random() * 5; JL.tarikan = 0; JL.lempar = undefined; const a = JL.arah; percik(JL.x + Math.sin(a) * 7, airDi(JL.x + Math.sin(a) * 7, JL.z + Math.cos(a) * 7, tAnim), JL.z + Math.cos(a) * 7, .7); } }
+  else if (P.fase === 'tunggu' && P.T > P.tunggu) { bunyi('gigit'); P.fase = 'makan'; P.T = 0; JL.makan = true; $('#seru').style.display = ''; }
+  else if (P.fase === 'makan' && P.T > 1.7) { bunyi('kabur'); P.fase = 'tunggu'; P.T = 0; P.tunggu = 2 + Math.random() * 4; JL.makan = false; $('#seru').style.display = 'none'; toast('Yah, ikannya kabur! Tunggu umpan dimakan lagi 🐟'); }
   else if (P.fase === 'tarik') { $('#seru').style.display = 'none'; JL.s = 3;
     if (P.T > .7) { const J = IKAN_JENIS[P.ikan], cm = J.uk ? Math.round(J.uk[0] + Math.random() * (J.uk[1] - J.uk[0])) : 0, c = catatanIkan();
       c.total++; c.jenis[J.n] = (c.jenis[J.n] || 0) + 1; if (cm && (!c.terbesar || cm > c.terbesar.cm)) c.terbesar = {n: J.n, cm}; localStorage.setItem(TANGKAPAN_SIMPAN, JSON.stringify(c)); tampilTangkapan();
@@ -1208,7 +1209,7 @@ function buka(peran) { if (!CFG.main_url) { $('#teman').style.display = 'none'; 
     if (!MP.mau && JL.aktif) $('#teman').textContent = '🐾 Jalan-jalan sendiri'; }; }
 function terima(m) {
   if (m.t === 'halo') { MP.saya = m.saya; hapusSemuaTeman(); m.pemain.forEach(tambahTeman); aturTeman(); $('#logObrol').innerHTML = ''; $('#feedObrol').innerHTML = ''; (m.obrolan || []).forEach(o => tulisObrol(o, true)); }
-  else if (m.t === 'baru') { tambahTeman(m.p); aturTeman(); if (JL.aktif) { toast(`${m.p.nama} ikut jalan-jalan! 🐾`); tulisSistem(`🐾 ${m.p.nama} ikut jalan-jalan`); } }
+  else if (m.t === 'baru') { tambahTeman(m.p); aturTeman(); if (JL.aktif) { bunyi('masuk'); toast(`${m.p.nama} ikut jalan-jalan! 🐾`); tulisSistem(`🐾 ${m.p.nama} ikut jalan-jalan`); } }
   else if (m.t === 'p') { const p = MP.pemain.get(m.no); if (p) Object.assign(p.tuju, {x: m.x, z: m.z, y: m.y, a: m.a, l: m.l}), p.s = m.s || 0; }
   else if (m.t === 'e') { const p = MP.pemain.get(m.no); if (p) mulaiEmote(p, m.e); }
   else if (m.t === 'ikan') { const p = MP.pemain.get(m.no), J = IKAN_JENIS[m.i]; if (p) { p.s = 3; pamerIkan(p, m.i); } if (J && p) tulisSistem(`🎣 ${p.nama} dapat ${J.n}!`); }
@@ -1434,7 +1435,7 @@ function ambilFoto() { if ($('#modalFoto').classList.contains('on')) return;
   REN.setPixelRatio(pr); REN.setSize(innerWidth, innerHeight); FOTO.src = c;
   /* pusat pandang: di halaman awal pemandangan digeser ke kiri karena panel data */
   const jl = JL.aktif || document.body.classList.contains('bersih'), hp = innerWidth <= 820; FOTO.pusatX = jl || hp ? .5 : (innerWidth - 392) / 2 / innerWidth; FOTO.pusatY = hp && !jl ? .33 : .5;
-  const k = $('#kilat'); k.classList.remove('on'); void k.offsetWidth; k.classList.add('on');
+  bunyi('foto'); const k = $('#kilat'); k.classList.remove('on'); void k.offsetWidth; k.classList.add('on');
   JL.kunci = {}; BEBAS.kunci = {}; $('#modalFoto').classList.add('on'); gambarFoto(); }
 function potongFoto(rasio) { const S = FOTO.src, W = S.width, H = S.height, a = {asli: W / H, persegi: 1, cerita: 9 / 16, potret: 4 / 5, lebar: 16 / 9}[rasio] || W / H;
   let w = W, h = H; if (W / H > a) w = H * a; else h = W / a;
@@ -1491,7 +1492,7 @@ if (navigator.canShare && navigator.canShare({files: [new File([''], 'a.png', {t
    Pilihan nyala/mati disimpan di perangkat pengunjung. Saat ada obrolan musik mengecil sebentar. */
 const MUSIK = {ctx: null, gain: null, src: null, buf: null, mau: localStorage.getItem('musik_kota') !== 'mati', memuat: false, VOL: 1, redam: 0};
 const MUSIK_PANJANG = 32 * 3 * 60 / 84;   /* 32 birama 3/4 pada 84 ketuk/menit */
-function tombolMusik() { const b = $('#bMusik'); b.textContent = MUSIK.mau ? '🔊' : '🔇'; b.title = MUSIK.mau ? 'Matikan musik' : 'Nyalakan musik'; b.classList.toggle('mati', !MUSIK.mau); }
+function tombolMusik() { const b = $('#bMusik'); b.textContent = MUSIK.mau ? '🔊' : '🔇'; b.title = MUSIK.mau ? 'Matikan suara (musik & efek)' : 'Nyalakan suara (musik & efek)'; b.classList.toggle('mati', !MUSIK.mau); }
 async function siapkanMusik() { if (MUSIK.ctx || MUSIK.memuat) return; MUSIK.memuat = true;
   try { const AC = window.AudioContext || window.webkitAudioContext; MUSIK.ctx = new AC(); MUSIK.gain = MUSIK.ctx.createGain(); MUSIK.gain.gain.value = 0; MUSIK.gain.connect(MUSIK.ctx.destination);
     const data = await fetch('musik-pulau.mp3?v=3').then(r => { if (!r.ok) throw r.status; return r.arrayBuffer(); });
@@ -1500,18 +1501,71 @@ async function siapkanMusik() { if (MUSIK.ctx || MUSIK.memuat) return; MUSIK.mem
     const ch = MUSIK.buf.getChannelData(0); let s0 = 0; while (s0 < ch.length && Math.abs(ch[s0]) < 1e-4) s0++;
     const src = MUSIK.ctx.createBufferSource(); src.buffer = MUSIK.buf; src.loop = true; src.loopStart = s0 / MUSIK.buf.sampleRate; src.loopEnd = Math.min(MUSIK.buf.duration, src.loopStart + MUSIK_PANJANG);
     src.connect(MUSIK.gain); src.start(0, src.loopStart); MUSIK.src = src; aturVolMusik(2.5);
-  } catch (e) { MUSIK.ctx = null; } finally { MUSIK.memuat = false; } }
+  } catch (e) { /* musik gagal dimuat: konteks suara tetap dipakai untuk efek */ } finally { MUSIK.memuat = false; } }
 function aturVolMusik(lama = .5) { if (!MUSIK.ctx) return; const g = MUSIK.gain.gain, t = MUSIK.ctx.currentTime, tuju = MUSIK.mau && !document.hidden ? MUSIK.VOL * (MUSIK.redam > t ? .35 : 1) : 0;
   g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(tuju, t + lama);
   if (tuju > 0 && MUSIK.ctx.state === 'suspended') MUSIK.ctx.resume(); if (tuju === 0) setTimeout(() => { if (MUSIK.ctx && (!MUSIK.mau || document.hidden)) MUSIK.ctx.suspend(); }, lama * 1000 + 100); }
 function redamMusik(detik = 3) { if (!MUSIK.ctx || !MUSIK.mau) return; MUSIK.redam = MUSIK.ctx.currentTime + detik; aturVolMusik(.3); clearTimeout(MUSIK._t); MUSIK._t = setTimeout(() => aturVolMusik(1.2), detik * 1000); }
 $('#bMusik').addEventListener('click', e => { e.stopPropagation(); MUSIK.mau = !MUSIK.mau; localStorage.setItem('musik_kota', MUSIK.mau ? 'nyala' : 'mati'); tombolMusik();
-  if (MUSIK.mau) { if (!MUSIK.ctx) siapkanMusik(); else aturVolMusik(1); toast('🎵 Musik: Angin Pulau Nusantara'); } else aturVolMusik(.4); });
+  if (MUSIK.mau) { if (!MUSIK.ctx) siapkanMusik(); else aturVolMusik(1); toast('🔊 Suara nyala · Musik: Angin Pulau Nusantara'); } else { aturVolMusik(.4); toast('🔇 Musik & efek suara dimatikan'); } });
 /* sentuhan / klik / tombol pertama di mana saja = musik mulai (bila tidak dimatikan) */
 const _mulaiMusik = () => { if (MUSIK.mau) { if (!MUSIK.ctx) siapkanMusik(); else aturVolMusik(1); } ['pointerdown', 'keydown'].forEach(n => removeEventListener(n, _mulaiMusik, true)); };
 ['pointerdown', 'keydown'].forEach(n => addEventListener(n, _mulaiMusik, true));
 document.addEventListener('visibilitychange', () => aturVolMusik(document.hidden ? .2 : 1));
 tombolMusik();
+
+/* ================= EFEK SUARA (disintesis langsung di browser, tanpa berkas — ringan & bebas hak cipta) ================= */
+/* Ikut tombol 🔊: kalau suara dimatikan, efek juga diam. Suara dari binatang lain (pemain/NPC) makin pelan bila jauh dari kamera. */
+const EFEK_VOL = .6;
+let _derau = null;
+function _sfx() { const c = MUSIK.ctx; if (!c || !MUSIK.mau || document.hidden) return null; if (c.state === 'suspended') c.resume();
+  if (!MUSIK.sfx) { MUSIK.sfx = c.createGain(); MUSIK.sfx.gain.value = EFEK_VOL; MUSIK.sfx.connect(c.destination); }
+  if (!_derau) { _derau = c.createBuffer(1, c.sampleRate, c.sampleRate); const d = _derau.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  return c; }
+/* nada: frekuensi meluncur f0→f1 */
+function _nada(c, out, f0, f1, dur, vol, t = 0, tipe = 'sine', serang = .005) { const o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime + t;
+  o.type = tipe; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
+  g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + serang); g.gain.exponentialRampToValueAtTime(.0005, t0 + dur);
+  o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + dur + .05); }
+/* desis: derau disaring (air, angin, tepuk) */
+function _desis(c, out, dur, vol, t = 0, f0 = 900, f1 = 900, q = 1, jenis = 'bandpass', serang = .004) { const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(), t0 = c.currentTime + t;
+  s.buffer = _derau; s.loop = true; f.type = jenis; f.Q.value = q; f.frequency.setValueAtTime(f0, t0); f.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t0 + dur);
+  g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + serang); g.gain.exponentialRampToValueAtTime(.0005, t0 + dur);
+  s.connect(f); f.connect(g); g.connect(out); s.start(t0, Math.random() * .5); s.stop(t0 + dur + .05); }
+const _do = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77, 1046.5, 1174.66, 1318.5];   /* C5 .. E6 */
+const SFX = {
+  lempar: (c, o) => { _desis(c, o, .45, .35, 0, 400, 2400, 2.5); for (let i = 0; i < 6; i++) _nada(c, o, 2600, 2400, .02, .05, .05 + i * .05, 'square'); },
+  plung: (c, o) => { _nada(c, o, 900, 160, .18, .45); _desis(c, o, .25, .18, .02, 1200, 400, 1.2); },
+  gigit: (c, o) => { _nada(c, o, 500, 300, .09, .35); _nada(c, o, 520, 320, .09, .35, .14); _nada(c, o, 1568, 1568, .25, .18, .3, 'triangle'); },
+  tarik: (c, o) => { for (let i = 0; i < 14; i++) _nada(c, o, 2200 + i * 40, 2000, .018, .07, i * .045, 'square'); _desis(c, o, .6, .3, .55, 2000, 300, .8); },
+  dapat: (c, o, langka) => { const n = langka ? [0, 2, 4, 7, 9, 7] : [0, 2, 4, 7]; n.forEach((k, i) => { _nada(c, o, _do[k], _do[k], .5, .22, i * .09, 'triangle'); _nada(c, o, _do[k] * 2, _do[k] * 2, .3, .06, i * .09); }); },
+  kabur: (c, o) => { _nada(c, o, 420, 380, .22, .25, 0, 'triangle'); _nada(c, o, 360, 250, .4, .25, .25, 'triangle'); },
+  cebur: (c, o) => { _desis(c, o, .7, .55, 0, 2500, 250, .7, 'lowpass'); _nada(c, o, 300, 90, .3, .3); for (let i = 0; i < 5; i++) _nada(c, o, 500 + Math.random() * 700, 1200, .06, .07, .25 + i * .07); },
+  renang: (c, o) => { _desis(c, o, .28, .14, 0, 1400, 500, 1, 'bandpass', .03); },
+  lompat: (c, o) => { _nada(c, o, 260, 620, .2, .3, 0, 'triangle'); },
+  mendarat: (c, o) => { _nada(c, o, 140, 60, .12, .35); _desis(c, o, .1, .12, 0, 600, 200, .7, 'lowpass'); },
+  pop: (c, o) => { _nada(c, o, 700, 1300, .08, .3); },
+  hati: (c, o) => { [4, 7, 9].forEach((k, i) => _nada(c, o, _do[k], _do[k], .45, .14, i * .11, 'sine', .01)); _nada(c, o, _do[9] * 2, _do[9] * 2, .5, .05, .33); },
+  tawa: (c, o) => { for (let i = 0; i < 4; i++) _nada(c, o, 520 - i * 25, 420 - i * 25, .1, .22, i * .13, 'triangle'); },
+  tepuk: (c, o) => { _desis(c, o, .07, .45, 0, 1800, 1100, 1.2, 'bandpass', .001); },
+  joget: (c, o) => { [0, 4, 2, 5, 4, 7, 4, 0].forEach((k, i) => _nada(c, o, _do[k], _do[k], .16, .13, i * .17, 'square', .005)); },
+  duduk: (c, o) => { _desis(c, o, .22, .2, 0, 500, 150, .7, 'lowpass'); },
+  sedih: (c, o) => { _nada(c, o, 392, 370, .35, .2, 0, 'triangle'); _nada(c, o, 349, 310, .6, .2, .38, 'triangle'); },
+  bintang: (c, o) => { [7, 9, 8].forEach((k, i) => _nada(c, o, _do[k] * 1.5, _do[k] * 1.5, .3, .1, i * .07)); },
+  pesan: (c, o) => { _nada(c, o, 880, 880, .08, .14, 0, 'sine', .003); _nada(c, o, 1320, 1320, .12, .1, .07); },
+  masuk: (c, o) => { _nada(c, o, _do[0], _do[0], .3, .14, 0, 'triangle'); _nada(c, o, _do[4], _do[4], .4, .14, .12, 'triangle'); },
+  foto: (c, o) => { _desis(c, o, .05, .5, 0, 3000, 2000, .8, 'highpass', .001); _nada(c, o, 1800, 900, .04, .2, 0, 'square'); _desis(c, o, .12, .3, .09, 2500, 1500, .8, 'bandpass', .002); },
+  ktp: (c, o) => { _nada(c, o, 120, 60, .15, .5); _desis(c, o, .12, .3, 0, 800, 200, .7, 'lowpass'); [0, 4, 7, 9].forEach((k, i) => _nada(c, o, _do[k], _do[k], .5, .18, .2 + i * .1, 'triangle')); },
+  klik: (c, o) => { _nada(c, o, 1400, 1100, .03, .08, 0, 'sine', .002); },
+};
+/* bunyi(nama, posisi?) — posisi = titik di pulau (Vector3) untuk suara binatang lain; kosong = suara sendiri/antarmuka */
+function bunyi(nama, pos, kali = 1, ...arg) { const c = _sfx(); if (!c || !SFX[nama]) return;
+  let v = kali; if (pos) { const d = cam.position.distanceTo(pos); v *= Math.pow(clamp(1 - d / 45), 2); if (v < .03) return; }
+  const g = c.createGain(); g.gain.value = v; g.connect(MUSIK.sfx); SFX[nama](c, g, ...arg); setTimeout(() => g.disconnect(), 3000); }
+/* siapa pemilik suara: binatang sendiri = penuh; pemain lain = sesuai jarak; NPC = lebih pelan lagi */
+function bunyiDari(p, nama, ...arg) { if (!p || !p.g) return bunyi(nama, null, 1, ...arg); if (p === JL) return bunyi(nama, null, 1, ...arg); bunyi(nama, p.g.position, NPC.has(p.no) && NPC.get(p.no) === p ? .45 : .8, ...arg); }
+/* klik halus untuk tombol antarmuka */
+document.addEventListener('click', e => { if (e.target.closest('button, .tombolKtp, a.tombolKtp') && !e.target.closest('#emote, #bPancing, #bFoto, #bFoto2, #bFoto3, #bMusik')) bunyi('klik'); }, true);
 
 /*================= LOOP ================= */
 let t0 = performance.now(), tl = t0;
