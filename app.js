@@ -471,7 +471,7 @@ const KAS_POS = [PUSAT_KOTA[0] + 3.8, PUSAT_KOTA[1] + 4.6];
   balok(.3, .36, .1, emas, 0, .75, .63, K, 1.1); bola(.7, emas, 0, .95, 0, 1.15, .35, .75, K, 0);
   for (let i = 0; i < 7; i++) { const c = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .06, 20), emas); c.position.set(-.5 + i * .17, 1.12 + (i % 2) * .06, -.1 + (i % 3) * .12); c.rotation.set(.3 * i, i, .4); garis(c, 1.12); K.add(c); } }
 
-/* ================= JENIS BINATANG (24) ================= */
+/* ================= JENIS BINATANG (28) ================= */
 const JENIS = [
   {id: 'kelinci', n: 'Kelinci', e: '🐰', w: '#F4F0FA', t: 'panjang', a: '#FFB3C7'}, {id: 'beruang', n: 'Beruang', e: '🐻', w: '#A0704A', t: 'bulat', a: '#D9B38C'},
   {id: 'panda', n: 'Panda', e: '🐼', w: '#FFFFFF', t: 'bulat', a: '#2B2238', hitam: 1}, {id: 'rubah', n: 'Rubah', e: '🦊', w: '#FF8F4A', t: 'runcing', a: '#FFF1E0'},
@@ -484,7 +484,9 @@ const JENIS = [
   {id: 'singa', n: 'Singa', e: '🦁', w: '#F2B04A', t: 'bulat', a: '#B5652A', surai: 1}, {id: 'gajah', n: 'Gajah', e: '🐘', w: '#A9B4C8', t: 'gajah', a: '#FFD9E0', belalai: 1},
   {id: 'jerapah', n: 'Jerapah', e: '🦒', w: '#FFD27A', t: 'osikon', a: '#B5702A', bintik: 1}, {id: 'hamster', n: 'Hamster', e: '🐹', w: '#F2B77A', t: 'bulat', a: '#FFF1DA', gembul: 1},
   {id: 'burunghantu', n: 'Burung Hantu', e: '🦉', w: '#9A7A5A', t: 'jumbai', a: '#F2E2C2', paruh: 1, mataBesar: 1}, {id: 'kurakura', n: 'Kura-kura', e: '🐢', w: '#8ED16A', t: 'none', a: '#3E8E4A', tempurung: 1},
-  {id: 'rakun', n: 'Rakun', e: '🦝', w: '#9A9AA6', t: 'runcing', a: '#3A3A48', topeng: 1}, {id: 'monyet', n: 'Monyet', e: '🐵', w: '#B07A4A', t: 'samping', a: '#F2D2A8', mukaMonyet: 1}];
+  {id: 'rakun', n: 'Rakun', e: '🦝', w: '#9A9AA6', t: 'runcing', a: '#3A3A48', topeng: 1}, {id: 'monyet', n: 'Monyet', e: '🐵', w: '#B07A4A', t: 'samping', a: '#F2D2A8', mukaMonyet: 1},
+  {id: 'tupai', n: 'Tupai', e: '🐿️', w: '#C9743A', t: 'runcing', a: '#FFE9C9'}, {id: 'kapibara', n: 'Kapibara', e: '🦫', w: '#A87A50', t: 'mungil', a: '#7A5434'},
+  {id: 'kecoa', n: 'Kecoa', e: '🪳', w: '#9A5530', t: 'antena', a: '#5E2E14', antena: 1}, {id: 'kupukupu', n: 'Kupu-kupu', e: '🦋', w: '#5A4A7A', t: 'antena', a: '#FF8AD0', antena: 1, sayapKupu: 1}];
 const JENIS_ID = Object.fromEntries(JENIS.map(j => [j.id, j]));
 const _matCache = {}; const M = w => _matCache[w] || (_matCache[w] = MAT(w));
 /* bentuk satuan bersama (hemat memori: ratusan warga memakai geometri yang sama, cukup diskalakan) */
@@ -495,7 +497,8 @@ function tb(r, h, m, x, y, z, p, tp = 1.12) { const o = new THREE.Mesh(_GT, m); 
 function senyum(p, r, y, z, m) { const o = new THREE.Mesh(_GS, m); o.scale.set(r, r, r); o.rotation.z = Math.PI; o.position.set(0, y, z); p.add(o); return o; }
 const PERUT = {kelinci: '#FFFFFF', beruang: '#D9B38C', panda: '#FFFFFF', rubah: '#FFF6EA', babi: '#FFCAD4', bebek: '#FFF3A6', katak: '#DDF7C2', sapi: '#FFFFFF', ayam: '#FFFFFF',
   tikus: '#E6E6EF', anjing: '#FFF1DC', koala: '#E8ECF2', harimau: '#FFF6EA', domba: '#FFFFFF', pinguin: '#FFFFFF', kucing: '#F4F4F8', singa: '#FFE9C2', gajah: '#BFC9DA',
-  jerapah: '#FFF0C8', hamster: '#FFF7EA', burunghantu: '#F2E2C2', kurakura: '#F2E6A0', rakun: '#E6E6EE', monyet: '#F2D2A8'};
+  jerapah: '#FFF0C8', hamster: '#FFF7EA', burunghantu: '#F2E2C2', kurakura: '#F2E6A0', rakun: '#E6E6EE', monyet: '#F2D2A8',
+  tupai: '#FFE9C9', kapibara: '#BE916A', kecoa: '#C98A5A', kupukupu: '#8A7AB0'};
 
 /* binatang lucu tapi bercirikan hewan aslinya: moncong, telinga, ekor, kaki, motif bulu */
 function buatBinatang(J, r, o = {}) { const g = new THREE.Group(), B = new THREE.Group(); g.add(B); const id = J.id;
@@ -518,6 +521,13 @@ function buatBinatang(J, r, o = {}) { const g = new THREE.Group(), B = new THREE
   if (id === 'jerapah') bercak(9, a, 73, 1.1);
   if (id === 'burunghantu') for (let i = 0; i < 6; i++) bb(.045, M('#8A6A4A'), (i % 3 - 1) * .16, .42 + Math.floor(i / 3) * .2, .56, 1.6, .7, .4, B, 0);
   if (id === 'sapi') bb(.11, M('#FFC83D'), 0, 1.0, .5, 1, 1, 1, B, 1.08);   /* lonceng */
+  if (id === 'kecoa') { for (const s of [-1, 1]) { const sp = bb(.36, a, s * .18, .72, -.4, .55, 1.45, .36, B, 1.05); sp.rotation.set(-.25, 0, s * .1); bb(.05, M('#C98A5A'), s * .2, 1.05, -.48, 1, 1, .5, B, 0);   /* sayap mengilap */
+      for (const z of [.15, -.15]) { const kc = tb(.028, .5, gelap, s * .68, .42, z, B, 1.15); kc.rotation.z = s * 1.1; kc.rotation.x = z * 1.5; } } }   /* kaki tambahan di samping */
+  let sayap = null;
+  if (J.sayapKupu) { const pal = [['#FF8AD0', '#FFD447'], ['#8AD8FF', '#C69CFF'], ['#FFB347', '#FF6A6A'], ['#9BE36B', '#FFD447'], ['#C69CFF', '#FF8AD0']][Math.floor(r() * 5)];
+    sayap = [-1, 1].map(s => { const sg = new THREE.Group(); sg.position.set(s * .1, .86, -.42); B.add(sg); const m1 = M(pal[0]), m2 = M(pal[1]);
+      bb(.58, m1, s * .55, .28, -.05, 1, .82, .1, sg, 1.05); bb(.4, m2, s * .4, -.32, -.05, 1, .95, .1, sg, 1.05);
+      bb(.16, putih, s * .7, .38, .02, 1, 1, .3, sg, 0); bb(.09, M('#2B2238'), s * .45, .48, .02, 1, 1, .3, sg, 0); bb(.1, m1, s * .42, -.36, .02, 1, 1, .3, sg, 0); return sg; }); }
   if (id === 'anjing') { const kl = tb(.48, .1, M('#E5484D'), 0, 1.08, .02, B, 1.06); kl.scale.z = .44; bb(.07, M('#FFC83D'), 0, .98, .48, 1, 1, .6, B, 1.1); }   /* kalung + plakat */
   /* ----- leher (jerapah) ----- */
   const leher = id === 'jerapah' ? .72 : 0;
@@ -559,7 +569,7 @@ function buatBinatang(J, r, o = {}) { const g = new THREE.Group(), B = new THREE
   else if (id === 'rubah') { MZ(pr, .9, .68, 1.4, .25, .52); hd(.07, gelap, .3, .87); mulutJ(.17, .8, .06); }
   else if (id === 'kucing' || id === 'harimau' || id === 'singa') { for (const s of [-1, 1]) bb(.13, pr, s * .1, .26, .55, 1, .85, .8, kep, 0); bb(.06, id === 'singa' ? M('#6A3A2A') : pink, 0, .34, .63, 1.4, .8, .8, kep, 0); mulutJ(.17, .6, .05); kumis(.27, .58); }
   else if (id === 'tikus') { MZ(w, .82, .72, 1.3, .27, .52); hd(.06, pink, .3, .85); gigi(.15, .74); kumis(.28, .7, .5); }
-  else if (id === 'kelinci' || id === 'hamster') { for (const s of [-1, 1]) bb(.12, pr, s * .09, .26, .55, 1, .85, .8, kep, 0); hd(.055, pink, .34, .63); gigi(.15, .6); if (id === 'kelinci') kumis(.27, .58, .34); }
+  else if (id === 'kelinci' || id === 'hamster' || id === 'tupai') { for (const s of [-1, 1]) bb(.12, pr, s * .09, .26, .55, 1, .85, .8, kep, 0); hd(.055, pink, .34, .63); gigi(.15, .6); if (id === 'kelinci') kumis(.27, .58, .34); }
   else if (J.moncong) { const sn = tb(.21, .16, a, 0, .28, .6, kep, 1.08); sn.rotation.x = Math.PI / 2; for (const s of [-1, 1]) bb(.04, M('#C25A72'), s * .07, .28, .69, 1, 1.3, .5, kep, 0); mulutJ(.1, .58, .06); }
   else if (id === 'sapi') { MZ(M('#FFB3C1'), 1.3, .82, .8, .2, .5); for (const s of [-1, 1]) bb(.05, gelap, s * .12, .23, .7, 1, 1.3, .6, kep, 0); }
   else if (id === 'jerapah') { MZ(pr, 1.12, .82, .85, .22, .5); for (const s of [-1, 1]) bb(.035, gelap, s * .09, .28, .72, 1, 1.4, .6, kep, 0); mulutJ(.12, .7, .06); }
@@ -568,6 +578,9 @@ function buatBinatang(J, r, o = {}) { const g = new THREE.Group(), B = new THREE
   else if (id === 'rakun') { MZ(putih, .9, .7, 1.1, .26, .5); hd(.075, gelap, .33, .79); mulutJ(.17, .73, .05); kumis(.27, .64, .36); }
   else if (id === 'katak') { const mk = mulutJ(.24, .6, .24); mk.scale.y = .13; mk.scale.z = .1; }
   else if (id === 'kurakura') { mulutJ(.2, .6, .12); }
+  else if (id === 'kapibara') { MZ(M('#946A44'), 1.28, .95, 1.0, .26, .48); for (const s of [-1, 1]) bb(.045, gelap, s * .1, .36, .76, 1, 1.4, .6, kep, 0); mulutJ(.13, .72, .06);
+    bb(.17, M('#FF9A2A'), 0, 1.07, -.02, 1, .92, 1, kep, 1.06); bb(.06, M('#4CC05E'), .07, 1.24, 0, 1.7, .45, 1, kep, 1.1); }   /* jeruk di kepala, ciri khas kapibara */
+  else if (id === 'kecoa' || id === 'kupukupu') { mulutJ(.2, .6, .08); }
   else if (J.belalai) { let y = .3, z = .6; for (let i = 0; i < 7; i++) { bb(.15 - i * .012, w, 0, y, z, 1, 1, 1, kep, 1.08); y -= i < 4 ? .13 : -.08; z += .07; }
     for (const s of [-1, 1]) { const ga = kk(.05, .24, putih, s * .2, .12, .5, kep); ga.rotation.x = 1.9; } mulutJ(.08, .5, .06); }
   if (id === 'bebek') { bb(.2, oranye, 0, .27, .66, 1.35, .36, 1.2, kep, 1.08); bb(.16, M('#F07A20'), 0, .19, .62, 1.2, .26, 1.05, kep, 0); for (let k = 0; k < 3; k++) bb(.08, w, (k - 1) * .06, 1.02 + (k === 1 ? .06 : 0), .05, 1, 1.6, 1, kep, 1.1); }
@@ -589,10 +602,14 @@ function buatBinatang(J, r, o = {}) { const g = new THREE.Group(), B = new THREE
     else if (tw === 'gajah') { const e = bb(.5, w, s * .7, .42, -.08, .3, 1.15, 1.05, kep); e.rotation.y = -s * .3; bb(.34, a, s * .74, .42, -.02, .24, .9, .8, kep, 0).rotation.y = -s * .3; }
     else if (tw === 'osikon') { const e = tb(.05, .35, w, s * .2, 1.12, 0, kep); e.rotation.z = -s * .15; bb(.09, a, s * .23, 1.3, 0, 1, 1, 1, kep, 1.1); bb(.13, w, s * .55, .78, 0, 1.5, .6, .6, kep).rotation.z = s * .3; }
     else if (tw === 'jumbai') { const e = kk(.13, .4, w, s * .36, 1.0, 0, kep); e.rotation.z = -s * .35; }
+    else if (tw === 'mungil') { bb(.11, w, s * .38, .92, -.08, 1, 1, .6, kep); bb(.06, a, s * .38, .92, -.02, 1, 1, .4, kep, 0); }
+    else if (tw === 'antena') { const kupu = !!J.sayapKupu, n = kupu ? 7 : 10;
+      for (let i = 0; i < n; i++) { const u = i / (n - 1); bb(kupu ? .035 : .03, gelap, s * (.14 + u * (kupu ? .28 : .42)), .92 + u * (kupu ? .6 : .55) - (kupu ? 0 : u * u * .25), .18 + u * (kupu ? .1 : .45), 1, 1, 1, kep, 0); }
+      if (kupu) bb(.08, M(J.a), s * .42, 1.53, .28, 1, 1, 1, kep, 1.1); }
     else if (tw === 'samping') { bb(.22, w, s * .64, .45, 0, .6, 1, 1, kep); bb(.13, a, s * .66, .45, .04, .5, 1, 1, kep, 0); } }
   if (id === 'domba') { for (let i = 0; i < 7; i++) { const s = i / 7 * 6.28; bb(.18, w, Math.cos(s) * .34, .92 + Math.sin(s * 2) * .03, Math.sin(s) * .3 - .04, 1, .9, 1, kep, 1.05); } bb(.2, w, 0, 1.02, .02, 1, .9, 1, kep, 1.05); }
   /* ----- kaki ----- */
-  const kakiM = J.hitam || J.topeng || id === 'domba' ? a : id === 'rubah' ? M('#5A3A2A') : w;
+  const kakiM = J.hitam || J.topeng || id === 'domba' ? a : id === 'rubah' ? M('#5A3A2A') : id === 'kecoa' ? gelap : w;
   for (const s of [-1, 1]) {
     if (id === 'bebek' || id === 'pinguin') bb(.16, oranye, s * .28, -.08, .22, 1.25, .35, 1.6, B);
     else if (id === 'katak') { bb(.17, w, s * .32, -.06, .2, 1.3, .45, 1.5, B); for (let k = 0; k < 3; k++) bb(.06, w, s * .32 + (k - 1) * .11, -.08, .42, 1, .6, 1, B, 1.1); }
@@ -627,11 +644,13 @@ function buatBinatang(J, r, o = {}) { const g = new THREE.Group(), B = new THREE
     case 'pinguin': bb(.1, w, 0, -.15, -.02, 1.2, .6, 1, ekor); break;
     case 'burunghantu': bb(.16, w, 0, -.08, -.06, 1.25, .5, 1.3, ekor); break;
     case 'domba': bb(.15, w, 0, .08, -.02, 1, 1, 1, ekor, 1.05); break;
-    case 'kurakura': kk(.06, .16, w, 0, -.15, -.04, ekor).rotation.x = -2; break; }
+    case 'kurakura': kk(.06, .16, w, 0, -.15, -.04, ekor).rotation.x = -2; break;
+    case 'tupai': rantai(12, u => [0, -.05 + u * 1.85 - Math.max(0, u - .82) * 1.6, -.12 - Math.sin(u * Math.PI * .85) * .32 - Math.max(0, u - .82) * 1.8, .2 + Math.sin(u * Math.PI) * .15], i => i > 9 ? M('#E09A5A') : w, 1.04); break;   /* ekor tegak setinggi kepala, ujung melengkung ke belakang */
+    case 'kapibara': bb(.07, w, 0, .02, -.03, 1, 1, 1, ekor); break; }
   hiasWarga(B, kep, J, o, w);
   const bayang = new THREE.Mesh(new THREE.CircleGeometry(.75, 20), new THREE.MeshBasicMaterial({color: 0x2B2238, transparent: true, opacity: .18, depthWrite: false}));
   bayang.rotation.x = -Math.PI / 2; bayang.position.y = -.12; g.add(bayang);
-  g.userData = {B, kep, lg, ekor, jenis: J, r: r(), r2: r(), r3: r(), lahir: -99, atas: 3.05 + leher}; return g; }
+  g.userData = {B, kep, lg, ekor, sayap, jenis: J, r: r(), r2: r(), r3: r(), lahir: -99, atas: 3.05 + leher + (J.antena ? .25 : 0) + (id === 'kapibara' ? .2 : 0)}; return g; }
 
 /* ===== pilihan tampilan warga ber-KTP: warna, kelamin, rambut, aksesori ===== */
 const WARNA_BULU = ['#FF8A8A', '#FFB347', '#FFE066', '#9BE36B', '#6FD6C4', '#7FC8FF', '#8F9BFF', '#C69CFF', '#FF9AD5', '#FFFFFF', '#B8B8C8', '#8B5A3C', '#3A3A48'];
@@ -1144,6 +1163,7 @@ function poseKarakter(p, t, dt, diUdara) { const u = p.g.userData, jalan = Math.
   if (p.s === 2) { u.lg[1].rotation.set(-1.05 + (p.tarikan || 0), 0, .05); u.lg[0].rotation.set(-.8, 0, .55); u.B.rotation.x = .05; }
   if (p.s === 3) { u.lg[1].rotation.set(-2.4, 0, .05); u.lg[0].rotation.set(-2.2, 0, -.05); u.B.rotation.x = -.15; }
   if (u.ekor) u.ekor.rotation.y = Math.sin(fase * (jalan ? 1 : .3) + t * 3) * .35;
+  if (u.sayap) { const k = .25 + (Math.sin(t * (jalan ? 14 : 5) + (p.no || 0)) * .5 + .5) * (jalan ? .9 : .5); u.sayap[0].rotation.y = k; u.sayap[1].rotation.y = -k; }   /* kupu-kupu mengepak */
   if (p.l > .6 && p.em && p.em.j === 'duduk') p.em = null;     /* bergerak = berdiri lagi */
   if (p.s !== 1 || !p.em || p.em.j === 'lambai' || p.em.j === 'hati' || p.em.j === 'sedih') poseEmote(p, u, t, dt);
   aturAlat(p, t);
