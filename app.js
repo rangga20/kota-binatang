@@ -1836,7 +1836,7 @@ const BULAN = new THREE.Mesh(new THREE.SphereGeometry(11, 24, 14), BASIC('#F4F1F
 const MATAHARI = scene.children.find(o => o.isMesh && o.geometry && o.geometry.parameters && o.geometry.parameters.radius === 14 && o !== BULAN);
 if (MATAHARI) MATAHARI.material.transparent = true;
 /* cahaya api unggun di malam hari */
-const CAHAYA_API = new THREE.PointLight(C('#FFB25A'), 0, 46, 1.6); CAHAYA_API.position.set(PUSAT_KOTA[0], tanah(...PUSAT_KOTA) + 3, PUSAT_KOTA[1]); scene.add(CAHAYA_API);
+const CAHAYA_API = new THREE.PointLight(C('#FFA24A'), 0, 24, 2); CAHAYA_API.position.set(PUSAT_KOTA[0], tanah(...PUSAT_KOTA) + 3, PUSAT_KOTA[1]); scene.add(CAHAYA_API);
 function jamSekarang() { const q = new URLSearchParams(location.search).get('jam'); if (q != null && !isNaN(+q)) return ((+q) % 24 + 24) % 24; const d = new Date(); return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600; }
 function aturWaktu(jam) { let i = 0; while (i < WAKTU_KUNCI.length - 2 && WAKTU_KUNCI[i + 1][0] <= jam) i++;
   const [j0, A] = WAKTU_KUNCI[i], [j1, B] = WAKTU_KUNCI[i + 1], t = clamp((jam - j0) / Math.max(.001, j1 - j0)), mx = (a, b) => a + (b - a) * t;
@@ -1846,14 +1846,14 @@ function aturWaktu(jam) { let i = 0; while (i < WAKTU_KUNCI.length - 2 && WAKTU_
   scene.fog.color.set(campurW(A.f, B.f, t)); const m = mx(A.m, B.m); WAKTU.m = m; WAKTU.jam = jam;
   BINTANG_M.opacity = clamp((m - .4) / .5); BULAN.material.opacity = clamp((m - .3) / .4); BULAN.visible = m > .3;
   if (MATAHARI) { MATAHARI.material.opacity = clamp(1 - m * 1.4); MATAHARI.visible = m < .7; MATAHARI.material.color.set(campurW('#FFF8D6', '#FF9A5A', clamp(Math.abs(jam - 12) / 6 - .7, 0, 1))); }
-  CAHAYA_API.intensity = m * 2.2;
+  CAHAYA_API.intensity = m * 1.2;
   const gelap = _cB.set('#3A4678'); AWAN.forEach(w => w.g.traverse(o => { if (!o.material || !o.material.color) return; if (!o.material._asli) o.material._asli = o.material.color.clone(); o.material.color.copy(o.material._asli).lerp(gelap, m * .72); }));   /* awan ikut redup */
   document.body.classList.toggle('malam', m > .6); }
 aturWaktu(jamSekarang());
 setInterval(() => { if (!document.hidden) aturWaktu(jamSekarang()); }, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) aturWaktu(jamSekarang()); });
 /* bintang berkelip & api unggun berdenyut (dipanggil tiap frame) */
-function langkahWaktu(t) { if (WAKTU.m > .4) { BINTANG_M.size = 2 + Math.sin(t * 2.3) * .35; CAHAYA_API.intensity = WAKTU.m * (2 + Math.sin(t * 9) * .25 + Math.sin(t * 23) * .15); } }
+function langkahWaktu(t) { if (WAKTU.m > .4) { BINTANG_M.size = 2 + Math.sin(t * 2.3) * .35; CAHAYA_API.intensity = WAKTU.m * (1.1 + Math.sin(t * 9) * .14 + Math.sin(t * 23) * .08); } }
 
 /* ================= STATISTIK PENGUNJUNG (anonim) ================= */
 /* Setiap browser diberi id acak (bukan data pribadi) agar pengunjung unik bisa dihitung. Tidak ada nama, email, atau IP yang dikirim.
