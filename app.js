@@ -897,6 +897,7 @@ function isiPanel(d, h) {
   $('#waktu').textContent = tg ? 'Diperbarui ' + tg.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) : '';
   $('#demo').style.display = d.demo ? '' : 'none'; $('#tunda').style.display = d.tertunda ? '' : 'none';
   isiSawer(d, h); terapkanIklan();
+  const T = d.tambah; $('#tambahTerakhir').innerHTML = T && d.diperbarui ? 'Update terakhir: ' + [['followers', 'follower'], ['likes', 'like'], ['shares', 'share'], ['reposts', 'repost']].filter(([k]) => T[k]).map(([k, n]) => `<b>${T[k] > 0 ? '+' : ''}${fmt(T[k])}</b> ${n}`).join(' · ') : ''; $('#tambahTerakhir').style.display = T && Object.values(T).some(Boolean) ? '' : 'none';
   if (CFG.instagram_url) { $('#ig').href = CFG.instagram_url; $('#ig').style.display = ''; } }
 
 let _toastT = 0;
@@ -965,7 +966,7 @@ $('#kirimKtp').onclick = async () => { const nama = $('#namaKtp').value.trim().r
     if (!j.ok) { psn.className = 'salah'; psn.textContent = j.pesan || 'Gagal membuat KTP.'; return; }
     psn.textContent = ''; $('#bKtp').innerHTML = ikon('ktp') + ' Lihat KTP-ku'; localStorage.setItem(KTP_SIMPAN, JSON.stringify(j.ktp));
     $('#formKtp').style.display = 'none'; $('#hasilKtp').style.display = ''; gambarKartu(j.ktp);
-    toast(`Selamat datang, ${j.ktp.nama}! 🪪`); bunyi('ktp'); tampilTombolJalan(); muat(false); }
+    toast(`Selamat datang, ${j.ktp.nama}! 🪪`); bunyi('ktp'); catat('ktp'); tampilTombolJalan(); muat(false); }
   catch (e) { psn.className = 'salah'; psn.textContent = 'Gagal terhubung. Coba lagi sebentar lagi.'; }
   finally { $('#kirimKtp').disabled = false; } };
 const opsiKtp = k => ({kelamin: k.kelamin || '', warna: k.warna || '', rambut: k.rambut || 'none', warnaRambut: k.warnaRambut || '', aksesori: k.aksesori || []});
@@ -1048,7 +1049,7 @@ const JARAK_MAKS = 64;   /* kamera jalan-jalan boleh mundur jauh untuk menikmati
 const JL = {aktif: false, g: null, x: 0, z: 27, y: 0, vy: 0, arah: Math.PI, laju: 0, l: 0, s: 0, no: 0, em: null, kamYaw: 0, kamPitch: .32, jarak: 12, kunci: {}, joy: [0, 0], sapa: false, zona: ''};
 function ktpSaya() { return JSON.parse(localStorage.getItem(KTP_SIMPAN) || 'null'); }
 function tampilTombolJalan() { const ada = !!ktpSaya(); $('#bJalan').style.display = ada ? '' : 'none'; $('#bJalan2').style.display = ada ? '' : 'none'; }
-function mulaiJelajah() { const k = ktpSaya(); if (!k) { bukaKtp(); return; }
+function mulaiJelajah() { const k = ktpSaya(); if (!k) { bukaKtp(); return; } catat('jalan');
   $('#modal').classList.remove('on'); selesaiBebas(); document.body.classList.remove('bersih');
   if (JL.g) scene.remove(JL.g);
   JL.g = buatBinatang(JENIS_ID[k.jenis] || JENIS[0], rng(k.no * 131 + 7), opsiKtp(k)); JL.g.scale.setScalar(SKALA_WARGA); const skS = tingkatKtp(k.no); JL.g.add(papanNama(k.nama, JL.g.userData.atas, skS)); hiasPenyokong(JL.g, skS); scene.add(JL.g);
@@ -1348,7 +1349,7 @@ function langkahMancing(dt) { if (!PANCING.fase) return; PANCING.T += dt; const 
     if (P.T > .7) { const J = IKAN_JENIS[P.ikan], cm = J.uk ? Math.round(J.uk[0] + Math.random() * (J.uk[1] - J.uk[0])) : 0, c = catatanIkan();
       c.total++; c.jenis[J.n] = (c.jenis[J.n] || 0) + 1; if (cm && (!c.terbesar || cm > c.terbesar.cm)) c.terbesar = {n: J.n, cm}; localStorage.setItem(TANGKAPAN_SIMPAN, JSON.stringify(c)); tampilTangkapan();
       pamerIkan(JL, P.ikan); percik(JL.x + Math.sin(JL.arah) * 7, airDi(JL.x, JL.z, tAnim), JL.z + Math.cos(JL.arah) * 7, 1.6);
-      toast(J.e ? `Dapat ${J.n}! ${J.e}` : `Dapat ${J.n} ${cm} cm! 🎣${J.langka ? ' Langka sekali!' : ''}`); kirimIkan(P.ikan); P.fase = 'pamer'; P.T = 0; } }
+      toast(J.e ? `Dapat ${J.n}! ${J.e}` : `Dapat ${J.n} ${cm} cm! 🎣${J.langka ? ' Langka sekali!' : ''}`); kirimIkan(P.ikan); catat('mancing'); P.fase = 'pamer'; P.T = 0; } }
   else if (P.fase === 'pamer' && P.T > 2.2) berhentiMancing(''); }
 
 /* ================= MAIN BARENG: pemain lain terlihat langsung + obrolan dekat & global ================= */
@@ -1421,7 +1422,7 @@ document.querySelectorAll('#ruang [data-r]').forEach(b => b.addEventListener('cl
 $('#formObrol').addEventListener('submit', e => { e.preventDefault(); const el = $('#isiObrol'), teks = sensorTeks(el.value);
   if (!teks.replace(/[*\s]/g, '')) return;
   if (!MP.ws || MP.ws.readyState !== 1 || MP.peran !== 'main') { toast('Belum tersambung ke ruang main bareng'); return; }
-  MP.ws.send(JSON.stringify({t: 'o', k: RUANG, teks})); el.value = ''; if (matchMedia('(pointer:coarse)').matches) el.blur(); });
+  MP.ws.send(JSON.stringify({t: 'o', k: RUANG, teks})); catat('obrol'); el.value = ''; if (matchMedia('(pointer:coarse)').matches) el.blur(); });
 $('#isiObrol').addEventListener('blur', () => { JL.kunci = {}; });
 
 /* ---------- tiap frame: kirim posisi sendiri, gerakkan pemain lain ---------- */
@@ -1606,7 +1607,7 @@ function ktpKeliling(no) { return MP.pemain.has(no) || NPC.has(no); }
 const BEBAS = {aktif: false, pos: V(0, 0, 0), v: V(0, 0, 0), yaw: 0, pitch: -.2, kunci: {}, pad: [0, 0, 0]};
 const _vB = V(0, 0, 0), _vB2 = V(0, 0, 0);
 function tandaiKam(id) { document.querySelectorAll('#kam [data-kam], #bBebas').forEach(x => x.classList.toggle('on', (x.dataset.kam || 'bebas') === id)); }
-function mulaiBebas() { if (BEBAS.aktif) return; BEBAS.aktif = true; BEBAS.pos.copy(cam.position); BEBAS.v.set(0, 0, 0);
+function mulaiBebas() { if (BEBAS.aktif) return; BEBAS.aktif = true; catat('bebas'); BEBAS.pos.copy(cam.position); BEBAS.v.set(0, 0, 0);
   const d = _vB.set(0, 0, -1).applyQuaternion(cam.quaternion); BEBAS.yaw = Math.atan2(d.x, d.z); BEBAS.pitch = Math.asin(clamp(d.y, -1, 1));
   document.body.classList.add('bebas'); tandaiKam('bebas'); if (innerWidth <= 820) document.body.classList.add('tutup');   /* HP: panel data dilipat supaya tombol terbang leluasa */
   toast(matchMedia('(pointer:coarse)').matches ? '🎥 Geser layar = lihat sekeliling · tombol = terbang' : '🎥 Geser mouse = lihat · WASD = terbang · Q/E = turun/naik · Shift = cepat'); }
@@ -1667,7 +1668,7 @@ function ambilFoto() { if ($('#modalFoto').classList.contains('on')) return;
   REN.setPixelRatio(pr); REN.setSize(innerWidth, innerHeight); FOTO.src = c;
   /* pusat pandang: di halaman awal pemandangan digeser ke kiri karena panel data */
   const jl = JL.aktif || document.body.classList.contains('bersih'), hp = innerWidth <= 820; FOTO.pusatX = jl || hp ? .5 : (innerWidth - 392) / 2 / innerWidth; FOTO.pusatY = hp && !jl ? .33 : .5;
-  bunyi('foto'); const k = $('#kilat'); k.classList.remove('on'); void k.offsetWidth; k.classList.add('on');
+  bunyi('foto'); catat('foto'); const k = $('#kilat'); k.classList.remove('on'); void k.offsetWidth; k.classList.add('on');
   JL.kunci = {}; BEBAS.kunci = {}; $('#modalFoto').classList.add('on'); gambarFoto(); }
 function potongFoto(rasio) { const S = FOTO.src, W = S.width, H = S.height, a = {asli: W / H, persegi: 1, cerita: 9 / 16, potret: 4 / 5, lebar: 16 / 9}[rasio] || W / H;
   let w = W, h = H; if (W / H > a) w = H * a; else h = W / a;
@@ -1713,7 +1714,7 @@ document.querySelectorAll('#pilihRasio [data-r]').forEach(b => b.addEventListene
 $('#teksFoto').addEventListener('input', e => { FOTO.teks = e.target.value; gambarFoto(); });
 $('#tglFoto').addEventListener('change', e => { FOTO.tanggal = e.target.checked; gambarFoto(); });
 $('#tagIgFoto').addEventListener('change', e => { FOTO.tag = e.target.checked; gambarFoto(); });
-$('#unduhFoto').addEventListener('click', () => $('#kanvasFoto').toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = namaFileFoto(); document.body.appendChild(a); a.click(); a.remove();
+$('#unduhFoto').addEventListener('click', () => $('#kanvasFoto').toBlob(b => { catat('unduh_foto'); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = namaFileFoto(); document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast(`Foto tersimpan! Jangan lupa tag IG ${igHandle()} 📸`); }, 'image/png'));
 $('#bagiFoto').addEventListener('click', () => $('#kanvasFoto').toBlob(async b => { const f = new File([b], namaFileFoto(), {type: 'image/png'});
   try { await navigator.share({files: [f], text: `Jalan-jalan di Kota Bhinneka! ${igHandle()}`}); } catch (e) {} }, 'image/png'));
@@ -1746,7 +1747,7 @@ function aturVolMusik(lama = .5) { if (!MUSIK.ctx) return; const g = MUSIK.gain.
   if (!document.hidden && MUSIK.ctx.state !== 'running') MUSIK.ctx.resume().catch(() => {}); if (document.hidden) setTimeout(() => { if (MUSIK.ctx && document.hidden) MUSIK.ctx.suspend(); }, lama * 1000 + 100); }   /* musik mati ≠ konteks mati: efek suara tetap bunyi */
 function redamMusik(detik = 3) { if (!MUSIK.ctx || !MUSIK.mau) return; MUSIK.redam = MUSIK.ctx.currentTime + detik; aturVolMusik(.3); clearTimeout(MUSIK._t); MUSIK._t = setTimeout(() => aturVolMusik(1.2), detik * 1000); }
 $('#bMusik').addEventListener('click', e => { e.stopPropagation(); MUSIK.mau = !MUSIK.mau; localStorage.setItem('musik_kota', MUSIK.mau ? 'nyala' : 'mati'); tombolMusik();
-  if (MUSIK.mau) { if (!MUSIK.buf) siapkanMusik(); else { if (!MUSIK.src) putarMusik(); aturVolMusik(1); } toast('Musik nyala · Angin Pulau Nusantara'); } else { aturVolMusik(.4); toast('Musik dimatikan · efek suara tetap bunyi'); } });
+  if (MUSIK.mau) { if (!MUSIK.buf) siapkanMusik(); else { if (!MUSIK.src) putarMusik(); aturVolMusik(1); } toast('Musik nyala · Angin Pulau Nusantara'); } else { aturVolMusik(.4); catat('musik_mati'); toast('Musik dimatikan · efek suara tetap bunyi'); } });
 /* sentuhan / klik / tombol pertama di mana saja = musik mulai (bila tidak dimatikan) */
 /* tidak dilepas setelah sentuhan pertama: di HP suara bisa terhenti (layar mati / pindah aplikasi), sentuhan berikutnya menyalakannya lagi */
 const _mulaiMusik = () => { siapkanSuara(); if (MUSIK.mau) { if (!MUSIK.buf) siapkanMusik(); else { if (!MUSIK.src) putarMusik(); aturVolMusik(1); } } };
@@ -1810,10 +1811,67 @@ function bunyiDari(p, nama, ...arg) { if (!p || !p.g) return bunyi(nama, null, 1
 /* klik halus untuk tombol antarmuka */
 document.addEventListener('click', e => { if (e.target.closest('button, .tombolKtp, a.tombolKtp') && !e.target.closest('#emote, #bPancing, #bFoto, #bFoto2, #bFoto3, #bMusik')) bunyi('klik'); }, true);
 
+/* ================= WAKTU NYATA: pagi · siang · senja · malam mengikuti jam di perangkat pengunjung ================= */
+/* Langit, cahaya matahari/bulan, kabut, bintang, dan api unggun berubah halus. Uji: tambahkan ?jam=21 di alamat. */
+const WAKTU_KUNCI = [   /* jam: warna langit (atas, tengah, bawah, cakrawala), matahari, langit-tanah, kabut, malam(0..1) */
+  [0, {l: ['#081028', '#152452', '#24366E', '#33467E'], si: .38, sc: '#A8B8FF', hi: .38, hs: '#5A6AA8', hg: '#1E2A4A', f: '#1A2550', m: 1}],
+  [5, {l: ['#0D1838', '#22336A', '#3A4A86', '#5A5A90'], si: .4, sc: '#A8B8FF', hi: .38, hs: '#5A6AA8', hg: '#24304E', f: '#24305A', m: .95}],
+  [6, {l: ['#5A86E0', '#C9A8E8', '#FFC8A8', '#FFE2B0'], si: .75, sc: '#FFD2A8', hi: .46, hs: '#D8C8F0', hg: '#88B8E0', f: '#F4D2C8', m: .3}],
+  [7.5, {l: ['#5FC4FF', '#A9E3FF', '#E2F6FF', '#FFF1D0'], si: 1.25, sc: '#FFF3DC', hi: .55, hs: '#CDEFFF', hg: '#7FD9E6', f: '#DDF4FF', m: 0}],
+  [16.5, {l: ['#5FC4FF', '#A9E3FF', '#E2F6FF', '#FFF1D0'], si: 1.25, sc: '#FFF3DC', hi: .55, hs: '#CDEFFF', hg: '#7FD9E6', f: '#DDF4FF', m: 0}],
+  [18, {l: ['#4A6FD0', '#B48ADC', '#FF9E7A', '#FFC27A'], si: .85, sc: '#FFB27A', hi: .46, hs: '#E8B8D8', hg: '#7A9AD6', f: '#F2B9A0', m: .3}],
+  [19.3, {l: ['#141E48', '#2C3470', '#5A4A88', '#8A5A88'], si: .45, sc: '#B8B0FF', hi: .4, hs: '#6A6AB0', hg: '#2A3058', f: '#2E2E62', m: .85}],
+  [20.5, {l: ['#081028', '#152452', '#24366E', '#33467E'], si: .38, sc: '#A8B8FF', hi: .38, hs: '#5A6AA8', hg: '#1E2A4A', f: '#1A2550', m: 1}],
+  [24, {l: ['#081028', '#152452', '#24366E', '#33467E'], si: .38, sc: '#A8B8FF', hi: .38, hs: '#5A6AA8', hg: '#1E2A4A', f: '#1A2550', m: 1}]];
+const WAKTU = {jam: -1, m: 0, kanvas: null, tex: null};
+const _cA = new THREE.Color(), _cB = new THREE.Color();
+const campurW = (a, b, t) => '#' + _cA.set(a).lerp(_cB.set(b), t).getHexString();
+/* langit baru (kanvas sendiri supaya bisa digambar ulang) */
+WAKTU.kanvas = kanvas(16, 256); WAKTU.tex = new THREE.CanvasTexture(WAKTU.kanvas); WAKTU.tex.encoding = THREE.sRGBEncoding; scene.background = WAKTU.tex;
+/* bintang & bulan */
+const BINTANG_M = new THREE.PointsMaterial({color: '#FFFFFF', size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false});
+{ const r = rng(77), p = []; for (let i = 0; i < 700; i++) { const a = r() * 6.283, e = .08 + r() * 1.4, R = 560; p.push(Math.cos(a) * Math.cos(e) * R, Math.sin(e) * R + 20, Math.sin(a) * Math.cos(e) * R - 80); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); const pt = new THREE.Points(g, BINTANG_M); pt.frustumCulled = false; scene.add(pt); }
+const BULAN = new THREE.Mesh(new THREE.SphereGeometry(11, 24, 14), BASIC('#F4F1FF', {fog: false, transparent: true, opacity: 0})); BULAN.position.set(-.55, .5, .66).normalize().multiplyScalar(420); scene.add(BULAN);
+const MATAHARI = scene.children.find(o => o.isMesh && o.geometry && o.geometry.parameters && o.geometry.parameters.radius === 14 && o !== BULAN);
+if (MATAHARI) MATAHARI.material.transparent = true;
+/* cahaya api unggun di malam hari */
+const CAHAYA_API = new THREE.PointLight(C('#FFB25A'), 0, 46, 1.6); CAHAYA_API.position.set(PUSAT_KOTA[0], tanah(...PUSAT_KOTA) + 3, PUSAT_KOTA[1]); scene.add(CAHAYA_API);
+function jamSekarang() { const q = new URLSearchParams(location.search).get('jam'); if (q != null && !isNaN(+q)) return ((+q) % 24 + 24) % 24; const d = new Date(); return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600; }
+function aturWaktu(jam) { let i = 0; while (i < WAKTU_KUNCI.length - 2 && WAKTU_KUNCI[i + 1][0] <= jam) i++;
+  const [j0, A] = WAKTU_KUNCI[i], [j1, B] = WAKTU_KUNCI[i + 1], t = clamp((jam - j0) / Math.max(.001, j1 - j0)), mx = (a, b) => a + (b - a) * t;
+  const L = A.l.map((w, k) => campurW(w, B.l[k], t)), x = WAKTU.kanvas.getContext('2d'), g = x.createLinearGradient(0, 0, 0, 256);
+  g.addColorStop(0, L[0]); g.addColorStop(.45, L[1]); g.addColorStop(.62, L[2]); g.addColorStop(.75, L[3]); g.addColorStop(1, L[3]); x.fillStyle = g; x.fillRect(0, 0, 16, 256); WAKTU.tex.needsUpdate = true;
+  sun.intensity = mx(A.si, B.si); sun.color.set(campurW(A.sc, B.sc, t)); hemi.intensity = mx(A.hi, B.hi); hemi.color.set(campurW(A.hs, B.hs, t)); hemi.groundColor.set(campurW(A.hg, B.hg, t));
+  scene.fog.color.set(campurW(A.f, B.f, t)); const m = mx(A.m, B.m); WAKTU.m = m; WAKTU.jam = jam;
+  BINTANG_M.opacity = clamp((m - .4) / .5); BULAN.material.opacity = clamp((m - .3) / .4); BULAN.visible = m > .3;
+  if (MATAHARI) { MATAHARI.material.opacity = clamp(1 - m * 1.4); MATAHARI.visible = m < .7; MATAHARI.material.color.set(campurW('#FFF8D6', '#FF9A5A', clamp(Math.abs(jam - 12) / 6 - .7, 0, 1))); }
+  CAHAYA_API.intensity = m * 2.2;
+  const gelap = _cB.set('#3A4678'); AWAN.forEach(w => w.g.traverse(o => { if (!o.material || !o.material.color) return; if (!o.material._asli) o.material._asli = o.material.color.clone(); o.material.color.copy(o.material._asli).lerp(gelap, m * .72); }));   /* awan ikut redup */
+  document.body.classList.toggle('malam', m > .6); }
+aturWaktu(jamSekarang());
+setInterval(() => { if (!document.hidden) aturWaktu(jamSekarang()); }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) aturWaktu(jamSekarang()); });
+/* bintang berkelip & api unggun berdenyut (dipanggil tiap frame) */
+function langkahWaktu(t) { if (WAKTU.m > .4) { BINTANG_M.size = 2 + Math.sin(t * 2.3) * .35; CAHAYA_API.intensity = WAKTU.m * (2 + Math.sin(t * 9) * .25 + Math.sin(t * 23) * .15); } }
+
+/* ================= STATISTIK PENGUNJUNG (anonim) ================= */
+/* Setiap browser diberi id acak (bukan data pribadi) agar pengunjung unik bisa dihitung. Tidak ada nama, email, atau IP yang dikirim.
+   Asal kunjungan dibaca dari halaman perujuk atau ?utm_source=instagram (pakai link ini di bio supaya terhitung dari Instagram). */
+const STAT = (() => { let v = localStorage.getItem('vid_kota');
+  if (!v) { v = [...crypto.getRandomValues(new Uint8Array(12))].map(b => b.toString(16).padStart(2, '0')).join(''); localStorage.setItem('vid_kota', v); }
+  const r = ((new URLSearchParams(location.search).get('utm_source') || '') + ' ' + (document.referrer || '')).toLowerCase().trim(); let asal = 'langsung';
+  if (r) { asal = 'lain'; for (const [k, pola] of [['instagram', /instagram|^ig\b/], ['tiktok', /tiktok/], ['youtube', /youtu/], ['facebook', /facebook|^fb\b|fb\.com/], ['whatsapp', /whatsapp|wa\.me/], ['google', /google\./], ['x', /twitter|t\.co\b|x\.com/]]) if (pola.test(r)) { asal = k; break; } }
+  return {v, asal}; })();
+function catat(e) { if (!CFG.data_url) return; const u = CFG.data_url.replace(/data\.json.*$/, 'kunjungan'), isi = JSON.stringify({v: STAT.v, e, hp: matchMedia('(pointer:coarse)').matches ? 1 : 0, a: STAT.asal});
+  try { if (navigator.sendBeacon) navigator.sendBeacon(u, new Blob([isi], {type: 'text/plain'})); else fetch(u, {method: 'POST', body: isi, keepalive: true}); } catch (e2) {} }
+/* tombol Sawer & kegiatan lain dicatat jumlahnya saja */
+$('#bSawer').addEventListener('click', () => catat('sawer'));
+
 /*================= LOOP ================= */
 let t0 = performance.now(), tl = t0;
 function loop(now) { const t = (now - t0) / 1000, dt = clamp((now - tl) / 1000, 0, .05); tl = now; tAnim = t; diam += dt;
-  if (JL.aktif) langkahJelajah(t, dt); langkahBareng(t, dt); langkahSemuaNpc(t, dt); langkahEfek(); langkahIklan(); if (!JL.aktif && BEBAS.aktif) langkahBebas(t, dt); else if (!JL.aktif) {
+  if (JL.aktif) langkahJelajah(t, dt); langkahBareng(t, dt); langkahSemuaNpc(t, dt); langkahEfek(); langkahIklan(); langkahWaktu(t); if (!JL.aktif && BEBAS.aktif) langkahBebas(t, dt); else if (!JL.aktif) {
   if (diam > 8 && !jari.size) ORB_T.th += dt * .03 * Math.cos(t * .05);           // goyang pelan kiri-kanan
   const k = 1 - Math.exp(-dt * 5); ORB.th = lerp(ORB.th, ORB_T.th, k); ORB.ph = lerp(ORB.ph, ORB_T.ph, k); ORB.r = lerp(ORB.r, ORB_T.r, k); ORB.tgt.lerp(ORB_T.tgt, k);
   cam.position.set(ORB.tgt.x + Math.sin(ORB.ph) * Math.sin(ORB.th) * ORB.r, ORB.tgt.y + Math.cos(ORB.ph) * ORB.r, ORB.tgt.z + Math.sin(ORB.ph) * Math.cos(ORB.th) * ORB.r);
@@ -1839,7 +1897,7 @@ function ukur() { const w = innerWidth, h = innerHeight, hp = w <= 820, jl = doc
 ukur(); addEventListener('resize', ukur);
 const LS = (() => { const a = new Float32Array(LP.count); for (let i = 0; i < LP.count; i++) a[i] = pantaiS(LX[i], LZ[i]); return a; })();
 $('#lipat').addEventListener('click', () => document.body.classList.toggle('tutup'));
-muat(true).then(() => { $('#muat').classList.add('hilang'); requestAnimationFrame(loop);
+muat(true).then(() => { $('#muat').classList.add('hilang'); requestAnimationFrame(loop); catat('buka');
   setInterval(() => { if (!document.hidden) muat(false); }, 60000); cekOnline(); setInterval(cekOnline, 60000); });   /* mode hemat: data dicek tiap 60 detik (Worker juga menyimpan 60 detik) */
 document.addEventListener('visibilitychange', () => { if (!document.hidden) muat(false); });
 tampilTombolJalan();
