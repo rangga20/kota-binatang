@@ -1540,7 +1540,7 @@ const MUSIK = {ctx: null, gain: null, src: null, buf: null, mau: localStorage.ge
 const MUSIK_PANJANG = 32 * 3 * 60 / 84;   /* 32 birama 3/4 pada 84 ketuk/menit */
 function tombolMusik() { const b = $('#bMusik'); b.innerHTML = ikon(MUSIK.mau ? 'musik' : 'musikMati'); b.title = MUSIK.mau ? 'Matikan musik (efek suara tetap bunyi)' : 'Nyalakan musik'; b.classList.toggle('mati', !MUSIK.mau); }
 /* konteks suara dibuat pada sentuhan pertama — dipakai musik DAN efek suara */
-function siapkanSuara() { if (MUSIK.ctx) { if (MUSIK.ctx.state === 'suspended' && !document.hidden) MUSIK.ctx.resume(); return; }
+function siapkanSuara() { if (MUSIK.ctx) { if (MUSIK.ctx.state !== 'running' && !document.hidden) MUSIK.ctx.resume().catch(() => {}); return; }   /* 'suspended' atau 'interrupted' (HP: layar mati, telepon, pindah aplikasi) */
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; MUSIK.ctx = new AC(); MUSIK.gain = MUSIK.ctx.createGain(); MUSIK.gain.gain.value = 0; MUSIK.gain.connect(MUSIK.ctx.destination); }
 async function siapkanMusik() { siapkanSuara(); if (!MUSIK.ctx || MUSIK.src || MUSIK.memuat) return; MUSIK.memuat = true;
   try {
@@ -1548,18 +1548,25 @@ async function siapkanMusik() { siapkanSuara(); if (!MUSIK.ctx || MUSIK.src || M
     MUSIK.buf = await new Promise((ok, gagal) => MUSIK.ctx.decodeAudioData(data, ok, gagal));
     /* lewati sunyi bawaan encoder MP3 di awal berkas, supaya titik ulang pas */
     const ch = MUSIK.buf.getChannelData(0); let s0 = 0; while (s0 < ch.length && Math.abs(ch[s0]) < 1e-4) s0++;
-    const src = MUSIK.ctx.createBufferSource(); src.buffer = MUSIK.buf; src.loop = true; src.loopStart = s0 / MUSIK.buf.sampleRate; src.loopEnd = Math.min(MUSIK.buf.duration, src.loopStart + MUSIK_PANJANG);
-    src.connect(MUSIK.gain); src.start(0, src.loopStart); MUSIK.src = src; aturVolMusik(2.5);
+    MUSIK.awal = s0 / MUSIK.buf.sampleRate; putarMusik(); aturVolMusik(2.5);
   } catch (e) { /* musik gagal dimuat: konteks suara tetap dipakai untuk efek */ } finally { MUSIK.memuat = false; } }
+/* sumber berulang (loop); kalau sampai berhenti karena apa pun, langsung diputar ulang dari awal lagu */
+function putarMusik() { if (!MUSIK.buf || !MUSIK.ctx) return; const b = MUSIK.buf, src = MUSIK.ctx.createBufferSource(); src.buffer = b; src.loop = true;
+  src.loopStart = MUSIK.awal || 0; src.loopEnd = src.loopStart + MUSIK_PANJANG <= b.duration + .001 ? Math.min(b.duration, src.loopStart + MUSIK_PANJANG) : b.duration;
+  src.onended = () => { if (MUSIK.src === src) { MUSIK.src = null; setTimeout(putarMusik, 50); } };
+  src.connect(MUSIK.gain); src.start(0, src.loopStart); MUSIK.src = src; }
 function aturVolMusik(lama = .5) { if (!MUSIK.ctx) return; const g = MUSIK.gain.gain, t = MUSIK.ctx.currentTime, tuju = MUSIK.mau && !document.hidden ? MUSIK.VOL * (MUSIK.redam > t ? .35 : 1) : 0;
   g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(tuju, t + lama);
-  if (!document.hidden && MUSIK.ctx.state === 'suspended') MUSIK.ctx.resume(); if (document.hidden) setTimeout(() => { if (MUSIK.ctx && document.hidden) MUSIK.ctx.suspend(); }, lama * 1000 + 100); }   /* musik mati ≠ konteks mati: efek suara tetap bunyi */
+  if (!document.hidden && MUSIK.ctx.state !== 'running') MUSIK.ctx.resume().catch(() => {}); if (document.hidden) setTimeout(() => { if (MUSIK.ctx && document.hidden) MUSIK.ctx.suspend(); }, lama * 1000 + 100); }   /* musik mati ≠ konteks mati: efek suara tetap bunyi */
 function redamMusik(detik = 3) { if (!MUSIK.ctx || !MUSIK.mau) return; MUSIK.redam = MUSIK.ctx.currentTime + detik; aturVolMusik(.3); clearTimeout(MUSIK._t); MUSIK._t = setTimeout(() => aturVolMusik(1.2), detik * 1000); }
 $('#bMusik').addEventListener('click', e => { e.stopPropagation(); MUSIK.mau = !MUSIK.mau; localStorage.setItem('musik_kota', MUSIK.mau ? 'nyala' : 'mati'); tombolMusik();
-  if (MUSIK.mau) { if (!MUSIK.src) siapkanMusik(); else aturVolMusik(1); toast('Musik nyala · Angin Pulau Nusantara'); } else { aturVolMusik(.4); toast('Musik dimatikan · efek suara tetap bunyi'); } });
+  if (MUSIK.mau) { if (!MUSIK.buf) siapkanMusik(); else { if (!MUSIK.src) putarMusik(); aturVolMusik(1); } toast('Musik nyala · Angin Pulau Nusantara'); } else { aturVolMusik(.4); toast('Musik dimatikan · efek suara tetap bunyi'); } });
 /* sentuhan / klik / tombol pertama di mana saja = musik mulai (bila tidak dimatikan) */
-const _mulaiMusik = () => { siapkanSuara(); if (MUSIK.mau) { if (!MUSIK.src) siapkanMusik(); else aturVolMusik(1); } ['pointerdown', 'keydown'].forEach(n => removeEventListener(n, _mulaiMusik, true)); };
-['pointerdown', 'keydown'].forEach(n => addEventListener(n, _mulaiMusik, true));
+/* tidak dilepas setelah sentuhan pertama: di HP suara bisa terhenti (layar mati / pindah aplikasi), sentuhan berikutnya menyalakannya lagi */
+const _mulaiMusik = () => { siapkanSuara(); if (MUSIK.mau) { if (!MUSIK.buf) siapkanMusik(); else { if (!MUSIK.src) putarMusik(); aturVolMusik(1); } } };
+['pointerdown', 'keydown', 'touchend'].forEach(n => addEventListener(n, _mulaiMusik, true));
+/* penjaga: tiap 5 detik pastikan musik masih jalan */
+setInterval(() => { if (!MUSIK.ctx || document.hidden) return; if (MUSIK.ctx.state !== 'running') MUSIK.ctx.resume().catch(() => {}); if (MUSIK.buf && !MUSIK.src) putarMusik(); }, 5000);
 document.addEventListener('visibilitychange', () => aturVolMusik(document.hidden ? .2 : 1));
 tombolMusik();
 
