@@ -691,6 +691,11 @@ const TEMPAT = (() => { const p = [];
   return p.sort((a, b) => a[2] - b[2]); })();
 /* bangunan Kota Bhinneka (hasil akhir Part 2) + rakit warga di pantai */
 letakGerbang(1); letakLumbung(1, 1); letakKebun(1); letakTenda(1);
+/* kebun di lokasi baru: tanahnya sedikit miring → kebun dimiringkan mengikuti bidang tanah (rata-rata dari 9 titik) supaya tidak ada bedengan yang tenggelam/melayang */
+{ const [kx, kz] = KEBUN_POS, d = 5, gx = (tinggi(kx + d, kz) - tinggi(kx - d, kz)) / (2 * d), gz = (tinggi(kx, kz + d) - tinggi(kx, kz - d)) / (2 * d);
+  let rata = 0; for (const ax of [-1, 0, 1]) for (const az of [-1, 0, 1]) rata += tinggi(kx + ax * d, kz + az * d) - (gx * ax * d + gz * az * d); rata /= 9;
+  const n = V(-gx, 1, -gz).normalize(), q = new THREE.Quaternion().setFromUnitVectors(V(0, 1, 0), n);
+  KEBUN.quaternion.copy(q.multiply(new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), .3))); KEBUN.position.y = rata + .02; }
 KELAPA_K.forEach((g, i) => KELAPA.push(Object.assign(g, {px: KELAPA_KOTA[i][0], pz: KELAPA_KOTA[i][1], tinggi: 8.5})));
 /* benda padat untuk mode jalan-jalan: [x, z, jari-jari] */
 const BENDA = [...[-1, 1].map(s => [GERBANG_POS[0] + FK.x * s * 3.7, GERBANG_POS[1] + FK.z * s * 3.7, 1.1]), [LUMBUNG_POS[0], LUMBUNG_POS[1], 3.1],
