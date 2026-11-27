@@ -1489,12 +1489,12 @@ if (navigator.canShare && navigator.canShare({files: [new File([''], 'a.png', {t
 /* ================= MUSIK LATAR: "Angin Pulau Nusantara" (orisinal, disintesis sendiri — aset/buat_musik.mjs) ================= */
 /* Diputar lewat Web Audio supaya berulang mulus tanpa jeda. Browser melarang suara otomatis, jadi musik mulai pada sentuhan/klik pertama.
    Pilihan nyala/mati disimpan di perangkat pengunjung. Saat ada obrolan musik mengecil sebentar. */
-const MUSIK = {ctx: null, gain: null, src: null, buf: null, mau: localStorage.getItem('musik_kota') !== 'mati', memuat: false, VOL: .32, redam: 0};
+const MUSIK = {ctx: null, gain: null, src: null, buf: null, mau: localStorage.getItem('musik_kota') !== 'mati', memuat: false, VOL: .85, redam: 0};
 const MUSIK_PANJANG = 32 * 3 * 60 / 84;   /* 32 birama 3/4 pada 84 ketuk/menit */
 function tombolMusik() { const b = $('#bMusik'); b.textContent = MUSIK.mau ? '🔊' : '🔇'; b.title = MUSIK.mau ? 'Matikan musik' : 'Nyalakan musik'; b.classList.toggle('mati', !MUSIK.mau); }
 async function siapkanMusik() { if (MUSIK.ctx || MUSIK.memuat) return; MUSIK.memuat = true;
   try { const AC = window.AudioContext || window.webkitAudioContext; MUSIK.ctx = new AC(); MUSIK.gain = MUSIK.ctx.createGain(); MUSIK.gain.gain.value = 0; MUSIK.gain.connect(MUSIK.ctx.destination);
-    const data = await fetch('musik-pulau.mp3').then(r => { if (!r.ok) throw r.status; return r.arrayBuffer(); });
+    const data = await fetch('musik-pulau.mp3?v=2').then(r => { if (!r.ok) throw r.status; return r.arrayBuffer(); });
     MUSIK.buf = await new Promise((ok, gagal) => MUSIK.ctx.decodeAudioData(data, ok, gagal));
     /* lewati sunyi bawaan encoder MP3 di awal berkas, supaya titik ulang pas */
     const ch = MUSIK.buf.getChannelData(0); let s0 = 0; while (s0 < ch.length && Math.abs(ch[s0]) < 1e-4) s0++;
