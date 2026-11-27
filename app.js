@@ -105,6 +105,66 @@ const IKON = {
 function ikon(n) { return `<svg class="ik" viewBox="0 0 24 24" aria-hidden="true">${IKON[n] || ''}</svg>`; }
 document.querySelectorAll('[data-ik]').forEach(el => { el.outerHTML = ikon(el.dataset.ik); });
 
+/* ================= IKON KTP: wajah 28 binatang, kelamin, rambut, aksesori — garis sederhana buatan sendiri ================= */
+/* Gaya sama dengan ikon.js (24×24, garis bulat). Mata ditulis dengan titik tebal (.m). */
+(() => { const W = '<circle cx="12" cy="13.5" r="7"/>', M = (y = 13.2, dx = 2.6) => `<path class="m" d="M${12 - dx} ${y}v.2M${12 + dx} ${y}v.2"/>`, S = (y = 16.4, r = 1.6) => `<path d="M${12 - r} ${y}q${r} ${r * .9} ${r * 2} 0"/>`;
+  Object.assign(IKON, {
+    /* ---- binatang ---- */
+    j_kelinci: W + '<path d="M9.3 7.2C8.4 3.6 8.6 1.8 9.6 1.8s1.6 2 1.4 5.4M14.7 7.2c.9-3.6.7-5.4-.3-5.4s-1.6 2-1.4 5.4"/>' + M() + '<path d="M11.4 15.4h1.2"/>' + S(16.6, 1.2),
+    j_beruang: W + '<circle cx="6.6" cy="7.8" r="2.2"/><circle cx="17.4" cy="7.8" r="2.2"/><ellipse cx="12" cy="16" rx="2.8" ry="2.1"/>' + M(12.4) + '<path class="m" d="M11.4 15.2h1.2"/>',
+    j_panda: W + '<circle class="isi" cx="6.6" cy="7.8" r="2.2"/><circle class="isi" cx="17.4" cy="7.8" r="2.2"/><ellipse class="isi" cx="9.3" cy="12.8" rx="1.6" ry="2"/><ellipse class="isi" cx="14.7" cy="12.8" rx="1.6" ry="2"/>' + S(16.8, 1.2),
+    j_rubah: '<path d="M5 9.5L6 3.5l4.2 3.6h3.6L18 3.5l1 6c0 4.8-3.4 8.7-7 10.2-3.6-1.5-7-5.4-7-10.2z"/>' + M(11.6, 2.8) + '<path class="m" d="M12 16.8v.2"/>',
+    j_babi: W + '<path d="M6.6 8.4L6 5l3 2M17.4 8.4L18 5l-3 2"/><ellipse cx="12" cy="15.8" rx="2.8" ry="2"/><path class="m" d="M11 15.8v.1M13 15.8v.1"/>' + M(11.8),
+    j_bebek: W + '<path d="M12 15.6c2 0 5.6-.3 6.8.6.6.6-.6 1.8-2.4 1.9-1.6.1-3.4-.5-4.4-1"/>' + M(12, 2.2) + '<path d="M10.4 6.6c.4-1.3 1.6-1.6 2.2-.6"/>',
+    j_katak: '<path d="M4.5 13.5c0-3.6 3.4-5 7.5-5s7.5 1.4 7.5 5-3.4 6.3-7.5 6.3-7.5-2.7-7.5-6.3z"/><circle cx="8" cy="8.5" r="2.6"/><circle cx="16" cy="8.5" r="2.6"/><path class="m" d="M8 8.6v.1M16 8.6v.1"/><path d="M8.5 15c2 1.6 5 1.6 7 0"/>',
+    j_sapi: W + '<path d="M7 8.2C5.6 7 5 5.4 5.6 4M17 8.2c1.4-1.2 2-2.8 1.4-4.2"/><path d="M5 11.6l-2.4.8 2.6 1.4M19 11.6l2.4.8-2.6 1.4"/><rect x="8.4" y="14.6" width="7.2" height="4.4" rx="2.2"/><path class="m" d="M10.6 16.8v.1M13.4 16.8v.1"/>' + M(12),
+    j_ayam: W + '<path d="M9.4 6.8c-.4-1.6.6-2.6 1.6-2 .2-1.2 1.6-1.4 2.2-.4.8-.6 2 .2 1.6 1.6"/><path d="M11 14.6l1 1.6 1-1.6z"/><path d="M12 17.2c-.6.9-.4 2 .4 2.2"/>' + M(12.6),
+    j_tikus: '<circle cx="12" cy="14.5" r="6"/><circle cx="6.3" cy="8.4" r="3.3"/><circle cx="17.7" cy="8.4" r="3.3"/>' + M(13.8, 2.2) + '<path class="m" d="M12 16.4v.1"/><path d="M8.6 16.6l-4 .8M8.6 17.6l-3.6 1.6M15.4 16.6l4 .8M15.4 17.6l3.6 1.6"/>',
+    j_anjing: W + '<path d="M6.2 9.2C4 9 3 11.4 4 15c.6 1.6 2 1.4 2.4-.2M17.8 9.2c2.2-.2 3.2 2.2 2.2 5.8-.6 1.6-2 1.4-2.4-.2"/><ellipse class="isi" cx="12" cy="15.4" rx="1.4" ry="1"/>' + S(17.4, 1.3) + M(12.4),
+    j_koala: W + '<circle cx="5.6" cy="9.4" r="3.2"/><circle cx="18.4" cy="9.4" r="3.2"/><ellipse class="isi" cx="12" cy="15" rx="1.7" ry="2.3"/>' + M(12.2, 3),
+    j_harimau: W + '<circle cx="6.6" cy="7.8" r="2"/><circle cx="17.4" cy="7.8" r="2"/><path d="M12 6.6v2.2M10 7.2l.6 1.6M14 7.2l-.6 1.6M5.2 13h1.6M17.2 13h1.6"/>' + M(12.4) + '<path class="m" d="M11.4 15.2h1.2"/>' + S(16.8, 1.3),
+    j_domba: '<path d="M6.2 10.4a2.6 2.6 0 0 1 1.6-4.2 2.6 2.6 0 0 1 4.2-1.4 2.6 2.6 0 0 1 4.2 1.4 2.6 2.6 0 0 1 1.6 4.2"/><ellipse cx="12" cy="14" rx="5" ry="5.8"/><path d="M7 11.6l-2.6 1M17 11.6l2.6 1"/>' + M(13.6, 2) + S(16.8, 1.1),
+    j_pinguin: '<path d="M12 4.5c4.2 0 7 3.4 7 8.2 0 4.4-3 7.3-7 7.3s-7-2.9-7-7.3c0-4.8 2.8-8.2 7-8.2z"/><path d="M12 9c-2.4-2.2-5 0-4.6 3 .4 3.6 2.6 5.4 4.6 5.4s4.2-1.8 4.6-5.4C17 9 14.4 6.8 12 9z"/>' + M(12, 2) + '<path d="M11 14.4l1 1.4 1-1.4z"/>',
+    j_kucing: '<path d="M5.4 10L6 3.8l4 3M18.6 10L18 3.8l-4 3"/>' + W + M() + '<path d="M11.4 15.2l.6.6.6-.6"/><path d="M8.4 15.6l-4.2-.6M8.4 16.6l-4 1M15.6 15.6l4.2-.6M15.6 16.6l4 1"/>',
+    j_singa: '<path d="M12 2.6l2 2 2.7-.8.8 2.7 2.7.8-.7 2.7 2 2-2 2 .7 2.7-2.7.8-.8 2.7-2.7-.8-2 2-2-2-2.7.8-.8-2.7-2.7-.8.7-2.7-2-2 2-2-.7-2.7 2.7-.8.8-2.7 2.7.8z"/><circle cx="12" cy="12.6" r="5.2"/>' + M(11.8, 2) + '<path class="m" d="M11.4 14.2h1.2"/>' + S(15.6, 1.1),
+    j_gajah: '<path d="M7.4 7.6C3.6 6.4 2 9 2.6 12.4c.6 2.6 2.8 3 4.6 2.2M16.6 7.6c3.8-1.2 5.4 1.4 4.8 4.8-.6 2.6-2.8 3-4.6 2.2"/><path d="M7 14c-1-3.6.6-8 5-8s6 4.4 5 8"/><path d="M10.6 14.4c-.2 2.6.2 5 2 5.8 1 .4 1.8-.2 1.6-1.2"/>' + M(11.4, 2.8),
+    j_jerapah: '<path d="M8 8.4c0-2 1.6-3.4 4-3.4s4 1.4 4 3.4v6.4c0 2.6-1.8 4.6-4 4.6s-4-2-4-4.6z"/><path d="M10 5.2V2.6M14 5.2V2.6"/><circle class="isi" cx="10" cy="2.4" r="1"/><circle class="isi" cx="14" cy="2.4" r="1"/><path d="M8 9l-3-1.2M16 9l3-1.2"/>' + M(11, 2) + '<path class="m" d="M10.8 17v.1M13.2 17v.1"/>',
+    j_hamster: '<path d="M5 13.8c0-4.2 3-7 7-7s7 2.8 7 7c0 3.6-3 5.8-7 5.8s-7-2.2-7-5.8z"/><circle cx="7.6" cy="7.6" r="1.6"/><circle cx="16.4" cy="7.6" r="1.6"/><circle cx="7.4" cy="15.4" r="1.8"/><circle cx="16.6" cy="15.4" r="1.8"/>' + M(12.4, 2.4) + '<path class="m" d="M11.4 14.6h1.2"/>',
+    j_burunghantu: '<path d="M5.4 8L5 3.6l3.6 2.6h6.8L19 3.6 18.6 8c.9 1.4 1.4 3.2 1.4 5 0 4.2-3.6 7-8 7s-8-2.8-8-7c0-1.8.5-3.6 1.4-5z"/><circle cx="9" cy="11.8" r="2.4"/><circle cx="15" cy="11.8" r="2.4"/><path class="m" d="M9 11.9v.1M15 11.9v.1"/><path d="M11 14.6l1 1.8 1-1.8z"/>',
+    j_kurakura: '<path d="M3 17.6c.6-4.6 3.6-7.6 7.6-7.6 3.6 0 6.2 2.6 6.8 7.6z"/><path d="M6.8 17.4l1.8-4.2h4l1.8 4.2M8.6 13.2l2-3M12.6 13.2l-.4-3.2"/><path d="M17.4 14.6c.6-3.2 1.8-4.6 3-4.6 1.4 0 1.6 1.6 1.2 3.4-.4 1.6-1.8 2.2-3.4 2.4"/><path class="m" d="M20.4 12v.1"/>',
+    j_rakun: '<path d="M5.4 10L6 3.8l4 3M18.6 10L18 3.8l-4 3"/>' + W + '<path class="isi" d="M5.2 12.4c1.6-1.4 4-1.6 6.8-.4 2.8-1.2 5.2-1 6.8.4-.6 1.6-2.4 2.6-4.4 2.2-1-.2-1.8-.8-2.4-.8s-1.4.6-2.4.8c-2 .4-3.8-.6-4.4-2.2z"/><path class="m" d="M11.4 16.2h1.2"/>',
+    j_monyet: W + '<circle cx="4.6" cy="13" r="2"/><circle cx="19.4" cy="13" r="2"/><path d="M12 11.2c-1.6-1.8-4.4-1-4.4 1.4 0 1.2.4 2 .8 2.8-.6 1.2-.4 3 1.4 3.6h4.4c1.8-.6 2-2.4 1.4-3.6.4-.8.8-1.6.8-2.8 0-2.4-2.8-3.2-4.4-1.4z"/>' + M(13, 1.8) + S(16.6, 1),
+    j_tupai: '<path d="M17.4 18.4c3.6-.4 4.8-3.8 4-7-.8-3.2-3.6-4-4.6-2.4"/><path d="M5.4 10.2L6.4 4l3.4 3.4M16.6 10.2L15.6 4l-3.4 3.4"/><circle cx="11" cy="13.6" r="6.4"/>' + '<path class="m" d="M8.8 13v.2M13.2 13v.2"/>' + '<path d="M10.2 16v1.4h1.6V16"/>',
+    j_kapibara: '<path d="M5.6 11c0-3 2.6-5 6.4-5s6.4 2 6.4 5v4.6c0 2.4-2.8 4-6.4 4s-6.4-1.6-6.4-4z"/><path d="M6.6 8.2l-.6-1.8 1.8.4M17.4 8.2l.6-1.8-1.8.4"/><circle cx="12" cy="3.6" r="1.7"/><path d="M12.6 2l1.4-.6"/><path class="m" d="M10.4 15.4v.1M13.6 15.4v.1"/>' + M(10.6, 2.8),
+    j_kecoa: '<ellipse cx="12" cy="14.6" rx="5.2" ry="5.6"/><path d="M9.6 9.6C8.6 6 6.6 3.4 4 2.6M14.4 9.6c1-3.6 3-6.2 5.6-7"/>' + M(13.8, 2.2) + S(16.6, 1.2),
+    j_kupukupu: '<path d="M12 7.6v11"/><path d="M11.4 10.6C9.6 6.2 6.4 4.2 4 5c-2 .8-.6 5.4 2.8 6.4-2.6.8-3.4 3.6-1.4 5 2 1.4 4.6-.2 6-3.4M12.6 10.6c1.8-4.4 5-6.4 7.4-5.6 2 .8.6 5.4-2.8 6.4 2.6.8 3.4 3.6 1.4 5-2 1.4-4.6-.2-6-3.4"/><path d="M12 7.6c-.6-2-1.6-3.4-2.8-4.2M12 7.6c.6-2 1.6-3.4 2.8-4.2"/>',
+    /* ---- jenis kelamin ---- */
+    k_L: '<circle cx="12" cy="11" r="5.6"/><path d="M6.6 9.6c.6-3.6 3.6-5.4 6.6-4.6 1.8-.8 3.8.4 4.2 2.6"/><path d="M5 21c.8-3 3.6-4.8 7-4.8s6.2 1.8 7 4.8"/><path class="m" d="M10 11.2v.1M14 11.2v.1"/><path d="M8.8 9.4l2-.6M15.2 9.4l-2-.6"/>',
+    k_P: '<circle cx="12" cy="11" r="5.6"/><path d="M6.4 11.4C5.6 6.6 8.2 4.6 12 4.6s6.4 2 5.6 6.8M6.4 11.4c-.6 3.6-1.4 5.4-2.4 6.6M17.6 11.4c.6 3.6 1.4 5.4 2.4 6.6"/><path d="M5 21c.8-3 3.6-4.8 7-4.8s6.2 1.8 7 4.8"/><path class="m" d="M10 11.6v.1M14 11.6v.1"/><path d="M9 10l-.8-.8M15 10l.8-.8"/><path d="M15.4 4.4l2-1.6.4 2.2z"/>',
+    /* ---- rambut (kepala bulat + gaya) ---- */
+    r_none: '<circle cx="12" cy="13" r="7"/>' + M(13) + S(16, 1.4),
+    r_jambul: '<circle cx="12" cy="13" r="7"/><path d="M12 6c-1.4-1.6-.8-3.8 1.2-3.8 1.6 0 2 1.8.8 2.6"/>' + M(13) + S(16, 1.4),
+    r_poni: '<circle cx="12" cy="13" r="7"/><path d="M5.4 11c1.4-3.4 3.8-5 6.6-5s5.2 1.6 6.6 5c-1.4.6-2.6.2-3.4-.8-.8 1-2 1.4-3.2.6-1.2.8-2.4.4-3.2-.6-.8 1-2 1.4-3.4.8z"/>' + M(13.6) + S(16.4, 1.3),
+    r_kuncir: '<circle cx="12" cy="13" r="6.6"/><path d="M6 9.6c1-2.8 3.4-4.2 6-4.2s5 1.4 6 4.2"/><path d="M5.8 9.4c-2.2-.6-3.6.6-3.4 2.8.2 2.2 1.6 3 3.2 2.6M18.2 9.4c2.2-.6 3.6.6 3.4 2.8-.2 2.2-1.6 3-3.2 2.6"/>' + M(13.2) + S(16.2, 1.3),
+    r_panjang: '<circle cx="12" cy="12.4" r="6.2"/><path d="M5.6 11C5.4 6.8 8.2 4.6 12 4.6s6.6 2.2 6.4 6.4M5.6 11c-.4 4.4-.2 7.6-1 10M18.4 11c.4 4.4.2 7.6 1 10"/>' + M(12.8) + S(15.6, 1.3),
+    r_keriting: '<circle cx="12" cy="14" r="6.4"/><path d="M5.6 12.4a2 2 0 0 1 .4-3.6 2 2 0 0 1 2.6-2.8 2 2 0 0 1 3.4-1.4 2 2 0 0 1 3.4 1.4 2 2 0 0 1 2.6 2.8 2 2 0 0 1 .4 3.6"/>' + M(14.2) + S(17, 1.3),
+    r_mohawk: '<circle cx="12" cy="13.4" r="6.6"/><path d="M9.6 7.4l.2-4 1.2 2.4L12 2.2l1 3.6 1.2-2.4.2 4"/>' + M(13.6) + S(16.6, 1.3),
+    r_sanggul: '<circle cx="12" cy="14" r="6.4"/><circle cx="12" cy="4.6" r="2.4"/><path d="M6.2 11.4c1-2.6 3.2-4 5.8-4s4.8 1.4 5.8 4"/>' + M(14.2) + S(17, 1.3),
+    /* ---- aksesori ---- */
+    a_kacamata: '<circle cx="7.2" cy="13" r="3.6"/><circle cx="16.8" cy="13" r="3.6"/><path d="M10.8 12.4c.8-.8 1.6-.8 2.4 0M3.6 12.2L2 10.6M20.4 12.2l1.6-1.6"/>',
+    a_kacamatahitam: '<path class="isi" d="M3 10.2h7.6v2.4c0 2.2-1.6 3.6-3.8 3.6S3 14.8 3 12.6zM13.4 10.2H21v2.4c0 2.2-1.6 3.6-3.8 3.6s-3.8-1.4-3.8-3.6z"/><path d="M10.6 11.2c.9-.6 1.9-.6 2.8 0M2 10.2h20"/>',
+    a_pita: '<path d="M12 12L4.4 7.6c-1-.6-2.2.2-2.2 1.4v6c0 1.2 1.2 2 2.2 1.4zM12 12l7.6-4.4c1-.6 2.2.2 2.2 1.4v6c0 1.2-1.2 2-2.2 1.4z"/><circle class="isi" cx="12" cy="12" r="2"/><path d="M10.6 13.6L9 20M13.4 13.6L15 20"/>',
+    a_mahkota: '<path d="M3.6 18.4L2.6 7.4l5.2 4.2L12 4.4l4.2 7.2 5.2-4.2-1 11z"/><path d="M3.6 18.4h16.8v2.2H3.6z"/><circle class="isi" cx="12" cy="14.4" r="1.2"/>',
+    a_kupluk: '<path d="M4 17c0-6.2 3.6-10 8-10s8 3.8 8 10z"/><path d="M3 17h18v3H3z"/><circle cx="12" cy="4.6" r="2.2"/><path d="M9 10.4v6.4M12 9.6v7.2M15 10.4v6.4"/>',
+    a_topipet: '<path d="M4 14.4c0-5 3.6-8.4 8-8.4s8 3.4 8 8.4z"/><path d="M4 14.4h17.6c.6 0 .8.8.2 1.2-1.6 1-4 1.4-6.6 1.4"/><circle class="isi" cx="12" cy="6.2" r="1"/><path d="M12 6.4v8"/>',
+    a_syal: '<path d="M4 7.6c2.4 1.8 5 2.6 8 2.6s5.6-.8 8-2.6v4.2c-2.4 1.8-5 2.6-8 2.6s-5.6-.8-8-2.6z"/><path d="M14.4 14.2l1 7.4 3.6-.8-1.6-7.4"/><path d="M15.6 21.4l.2 1.2M17.4 21l.4 1.2"/>',
+    a_dasi: '<path d="M12 12L3.6 7.6v8.8zM12 12l8.4-4.4v8.8z"/><rect class="isi" x="10.2" y="10" width="3.6" height="4" rx="1.2"/>',
+    a_kalung: '<path d="M4.6 5.4c.4 6 3.4 10 7.4 10s7-4 7.4-10"/><circle cx="12" cy="18.2" r="2.6"/><circle class="isi" cx="6.6" cy="11.4" r=".9"/><circle class="isi" cx="8.8" cy="13.8" r=".9"/><circle class="isi" cx="15.2" cy="13.8" r=".9"/><circle class="isi" cx="17.4" cy="11.4" r=".9"/>',
+    a_bunga: '<circle cx="12" cy="10" r="2.4"/><path d="M12 7.6c-1.4-2.6-.6-4.8 0-5 .6.2 1.4 2.4 0 5zM14.3 8.8c1.6-2.4 3.8-2.8 4.3-2.4.1.6-1.4 2.4-4.3 2.4zM14.3 11.2c2.8 0 4.4 1.8 4.3 2.4-.5.4-2.7 0-4.3-2.4zM9.7 11.2c-1.6 2.4-3.8 2.8-4.3 2.4-.1-.6 1.5-2.4 4.3-2.4zM9.7 8.8c-2.9 0-4.4-1.8-4.3-2.4.5-.4 2.7 0 4.3 2.4z"/><path d="M12 12.4V22M12 18c-1.6-1.6-3.6-1.8-4.8-1.2M12 19.4c1.4-1.2 3-1.4 4-1"/>',
+    a_headphone: '<path d="M4.6 15v-3a7.4 7.4 0 0 1 14.8 0v3"/><rect x="2.6" y="13.4" width="4.4" height="7" rx="2"/><rect x="17" y="13.4" width="4.4" height="7" rx="2"/>',
+    a_tas: '<path d="M5.6 10.4c0-3 2.6-5.2 6.4-5.2s6.4 2.2 6.4 5.2V20c0 .8-.6 1.4-1.4 1.4H7c-.8 0-1.4-.6-1.4-1.4z"/><path d="M9.4 5.6V4.4c0-1.2 1-2 2.6-2s2.6.8 2.6 2v1.2"/><rect x="8.4" y="13.2" width="7.2" height="5" rx="1.4"/><path d="M8.4 15.2h7.2"/>'});
+})();
+
 /* ===== dari video: pulau ===== */
 /* ---------- bahan pulau ---------- */
 const pasirTex = tekstur(256, 256, (x, w, h) => { x.fillStyle = '#FFE2A8'; x.fillRect(0, 0, w, h); const r = rng(21);
@@ -802,7 +862,7 @@ function isiPanel(d, h) {
   if (!(d.usulan || []).length) { const li = document.createElement('li'); li.className = 'kosong'; li.textContent = 'Belum ada usulan. Tulis di komentar: mau bangun apa lagi?'; ul.appendChild(li); }
   const wb = $('#wargaBaru'); wb.innerHTML = '';
   h.ktp.slice().sort((a, b) => b.no - a.no).slice(0, 8).forEach(k => { const s = document.createElement('span'); s.className = 'chip'; const J = JENIS_ID[k.jenis] || JENIS[0];
-    s.textContent = `${J.e} ${k.nama} · ${nomorKtp(k.no)}`; wb.appendChild(s); });
+    s.innerHTML = `${ikon('j_' + J.id)} ${escHtml(k.nama)} · ${nomorKtp(k.no)}`; wb.appendChild(s); });
   if (!h.ktp.length) wb.textContent = 'Belum ada warga ber-KTP. Jadilah yang pertama!';
   $('#lebih').textContent = h.ktp.length ? '🐾 Warga ber-KTP bisa kamu temui sedang jalan-jalan di pulau.' : '';
   const tg = d.diperbarui ? new Date(d.diperbarui) : null;
@@ -845,18 +905,19 @@ const PRATINJAU = (() => { const ren = new THREE.WebGLRenderer({antialias: true,
       ren.render(sc, kam); }}; })();
 $('#wadahPratinjau').appendChild(PRATINJAU.el);
 const segarkan = () => { PRATINJAU.set(PIL.jenis || JENIS[0], opsiPil());
-  $('#namaJenis').textContent = PIL.jenis ? `${PIL.jenis.e} ${PIL.jenis.n}` : 'Pilih binatang di bawah'; $('#hitAks').textContent = `${PIL.aksesori.length}/3`; };
+  $('#namaJenis').innerHTML = PIL.jenis ? `${ikon('j_' + PIL.jenis.id)} ${PIL.jenis.n}` : 'Pilih binatang di bawah'; $('#hitAks').textContent = `${PIL.aksesori.length}/3`; };
 function pilihan(wadah, daftar, isi, klik, aktif) { const w = $(wadah); w.innerHTML = '';
   daftar.forEach(d => { const b = document.createElement('button'); b.type = 'button'; isi(b, d); b.onclick = () => { klik(d); tandai(); segarkan(); }; b._d = d; w.appendChild(b); });
   const tandai = () => w.querySelectorAll('button').forEach(b => b.classList.toggle('on', aktif(b._d))); tandai(); return tandai; }
-const tombolIkon = (b, d) => { b.className = 'jenis'; b.innerHTML = `<span>${d.e}</span>`; b.appendChild(document.createTextNode(d.n)); };
+/* tombol pilihan KTP: ikon garis buatan sendiri (ikon_ktp.js) + nama */
+const tombolIkon = awalan => (b, d) => { b.className = 'jenis'; b.innerHTML = ikon(awalan + d.id); b.appendChild(document.createTextNode(d.n)); b.title = d.n; };
 const tombolWarna = (b, d) => { b.className = 'warna'; b.style.background = d || 'conic-gradient(#FF8A8A,#FFE066,#9BE36B,#7FC8FF,#C69CFF,#FF8A8A)'; b.title = d ? d : 'Warna asli'; if (!d) b.textContent = 'asli'; };
-pilihan('#gridJenis', JENIS, tombolIkon, d => PIL.jenis = d, d => PIL.jenis === d);
-pilihan('#gridKelamin', [{id: 'L', n: 'Laki-laki', e: '👦'}, {id: 'P', n: 'Perempuan', e: '👧'}], tombolIkon, d => PIL.kelamin = d.id, d => PIL.kelamin === d.id);
+pilihan('#gridJenis', JENIS, tombolIkon('j_'), d => PIL.jenis = d, d => PIL.jenis === d);
+pilihan('#gridKelamin', [{id: 'L', n: 'Laki-laki'}, {id: 'P', n: 'Perempuan'}], tombolIkon('k_'), d => PIL.kelamin = d.id, d => PIL.kelamin === d.id);
 pilihan('#gridWarna', ['', ...WARNA_BULU], tombolWarna, d => PIL.warna = d, d => PIL.warna === d);
-pilihan('#gridRambut', RAMBUT, tombolIkon, d => PIL.rambut = d.id, d => PIL.rambut === d.id);
+pilihan('#gridRambut', RAMBUT, tombolIkon('r_'), d => PIL.rambut = d.id, d => PIL.rambut === d.id);
 pilihan('#gridWarnaRambut', WARNA_RAMBUT, tombolWarna, d => PIL.warnaRambut = d, d => PIL.warnaRambut === d);
-pilihan('#gridAksesori', AKSESORI, tombolIkon, d => { const i = PIL.aksesori.indexOf(d.id);
+pilihan('#gridAksesori', AKSESORI, tombolIkon('a_'), d => { const i = PIL.aksesori.indexOf(d.id);
   if (i >= 0) PIL.aksesori.splice(i, 1); else if (PIL.aksesori.length < 3) PIL.aksesori.push(d.id); else toast('Maksimal 3 aksesori ya'); }, d => PIL.aksesori.includes(d.id));
 segarkan();
 function bukaKtp() { $('#modal').classList.add('on'); const simpan = JSON.parse(localStorage.getItem(KTP_SIMPAN) || 'null');
@@ -906,7 +967,7 @@ function gambarKartu(k) { const J = JENIS_ID[k.jenis] || JENIS[0], c = $('#kartu
   lukisHologram(x, W2 - 120, 430, 78, k.no * .7);   /* segel hologram berkilau (kanan bawah) */
   x.fillStyle = '#2B2238'; x.font = "500 22px 'Fredoka', sans-serif"; x.textAlign = 'center'; x.fillText('KTP fiktif untuk permainan · bukan dokumen resmi · Koin bukan Rupiah', W2 / 2, H2 - 34);
   $('#unduhKtp').href = c.toDataURL('image/png'); $('#unduhKtp').download = `KTP-${nomorKtp(k.no)}-${k.nama.replace(/[^\w-]+/g, '_')}.png`;
-  $('#ktpku').textContent = `${J.e} ${k.nama} · ${nomorKtp(k.no)}`; }
+  $('#ktpku').innerHTML = `${ikon('j_' + J.id)} ${escHtml(k.nama)} · ${nomorKtp(k.no)}`; }
 { const s = JSON.parse(localStorage.getItem(KTP_SIMPAN) || 'null'); if (s) { $('#bKtp').innerHTML = ikon('ktp') + ' Lihat KTP-ku'; } }
 
 /* ================= KAMERA (geser putar, cubit/scroll zoom) ================= */
