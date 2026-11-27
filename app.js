@@ -1217,13 +1217,15 @@ $('#isiObrol').addEventListener('blur', () => { JL.kunci = {}; });
 
 /* ---------- tiap frame: kirim posisi sendiri, gerakkan pemain lain ---------- */
 function langkahBareng(t, dt) {
-  if (JL.aktif) {   /* kirim posisi sendiri ±8x per detik, hanya bila berubah (atau tiap 3 detik supaya tetap terlihat) */
+  if (JL.aktif) {   /* MODE HEMAT: posisi dikirim maks 5x per detik & HANYA bila berubah; diam = tidak kirim (detak tiap 20 detik) */
     MP.kirimT -= dt;
-    if (MP.ws && MP.ws.readyState === 1 && MP.peran === 'main' && MP.kirimT <= 0) { const r = v => Math.round(v * 100) / 100;
-      const s = JSON.stringify({t: 'p', x: r(JL.x), z: r(JL.z), y: r(JL.y), a: r(JL.arah), l: r(JL.laju), s: JL.s});
-      if (s !== MP.terakhir || MP.kirimT < -3) { MP.ws.send(s); MP.terakhir = s; MP.kirimT = .125; } } }
-  const k = 1 - Math.exp(-dt * (MP.peran === 'lihat' ? 5 : 10));
+    if (MP.ws && MP.ws.readyState === 1 && MP.peran === 'main' && MP.kirimT <= 0) { const r = (v, q) => Math.round(v / q) * q, r2 = v => Math.round(v * 100) / 100;
+      /* kunci perubahan dibulatkan kasar: goyangan kecil (ombak saat berenang, napas) tidak dihitung sebagai gerak */
+      const kunci = [r(JL.x, .05), r(JL.z, .05), JL.s === 1 ? 0 : r(JL.y, .1), r(JL.arah, .03), Math.round(JL.laju), JL.s].join();
+      if (kunci !== MP.terakhir || MP.kirimT < -20) { MP.ws.send(JSON.stringify({t: 'p', x: r2(JL.x), z: r2(JL.z), y: r2(JL.y), a: r2(JL.arah), l: r2(JL.laju), s: JL.s})); MP.terakhir = kunci; MP.kirimT = .2; } } }
+  const k = 1 - Math.exp(-dt * (MP.peran === 'lihat' ? 4 : 8));
   MP.pemain.forEach(p => { const T = p.tuju;
+    if (p.s === 1) T.y = airDi(T.x, T.z, t) - APUNG;   /* perenang: tinggi dihitung sendiri dari ombak, tidak perlu dikirim terus */
     if (Math.hypot(T.x - p.x, T.z - p.z) > 25) { p.x = T.x; p.z = T.z; p.y = T.y; }
     p.x = lerp(p.x, T.x, k); p.z = lerp(p.z, T.z, k); p.y = lerp(p.y, T.y, k); p.l = lerp(p.l, T.l, k);
     p.a += Math.atan2(Math.sin(T.a - p.a), Math.cos(T.a - p.a)) * k;
@@ -1272,6 +1274,6 @@ ukur(); addEventListener('resize', ukur);
 const LS = (() => { const a = new Float32Array(LP.count); for (let i = 0; i < LP.count; i++) a[i] = pantaiS(LX[i], LZ[i]); return a; })();
 $('#lipat').addEventListener('click', () => document.body.classList.toggle('tutup'));
 muat(true).then(() => { $('#muat').classList.add('hilang'); requestAnimationFrame(loop);
-  setInterval(() => { if (!document.hidden) muat(false); }, CFG.data_url ? 30000 : 60000); cekOnline(); setInterval(cekOnline, 30000); });
+  setInterval(() => { if (!document.hidden) muat(false); }, 60000); cekOnline(); setInterval(cekOnline, 60000); });   /* mode hemat: data dicek tiap 60 detik (Worker juga menyimpan 60 detik) */
 document.addEventListener('visibilitychange', () => { if (!document.hidden) muat(false); });
 tampilTombolJalan();
