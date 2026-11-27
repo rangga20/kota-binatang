@@ -134,6 +134,14 @@ tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
 #feedObrol{font-size:13.5px;line-height:1.4;display:flex;flex-direction:column;gap:4px}
 #feedObrol div{background:var(--krem);border-radius:10px;padding:4px 9px;overflow-wrap:anywhere}
 #nOnline.klik{cursor:pointer;text-decoration:underline dotted}
+/* ---- tombol musik ---- */
+#bMusik{position:fixed;left:16px;top:88px;z-index:7;width:46px;height:46px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);font-size:20px;cursor:pointer;padding:0}
+#bMusik.mati{background:#EEE4D6}
+#bMusik:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+body.jelajah #bMusik{left:auto;right:16px;top:172px}
+body.bersih:not(.jelajah) #bMusik{display:none}
+@media (max-width:820px){#bMusik{left:auto;right:10px;top:10px;width:42px;height:42px}body.jelajah #bMusik{right:auto;left:10px;top:10px}}
+
 /* ---- kamera bebas, layar bersih, foto ---- */
 #kam button.aksen{background:#BDE9FF}
 #bersihTombol{display:none;position:fixed;right:16px;bottom:16px;z-index:6;gap:8px}
@@ -197,6 +205,7 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
 <div id="bersihTombol"><button id="bTampil" title="Tampilkan lagi (H)">👁 Tampilkan</button><button id="bFoto3" title="Ambil foto (P)">📷</button></div>
 <div id="padBebas"><button data-g="2,1">⤒</button><button data-g="1,1">▲</button><button data-g="2,-1">⤓</button><button data-g="0,-1">◀</button><button data-g="1,-1">▼</button><button data-g="0,1">▶</button></div>
 <div id="kilat"></div>
+<button id="bMusik" title="Matikan musik">🔊</button>
 <div id="panel" class="kartu">
   <button id="lipat">Data kota ▾</button>
   <div id="isi">
