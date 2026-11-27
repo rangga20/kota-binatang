@@ -98,7 +98,8 @@ body.jelajah #hud{display:block}
 body.jelajah #panel,body.jelajah #kam,body.jelajah #kepala{display:none}
 #lokasi{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:6;padding:8px 18px;font-weight:700;font-size:18px;white-space:nowrap}
 #bKeluar{position:fixed;right:16px;top:14px;z-index:6;padding:8px 16px;font:700 16px 'Fredoka';color:var(--ink);cursor:pointer}
-#petunjuk{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;padding:8px 16px;font-size:14px;font-weight:600;white-space:nowrap}
+#petunjuk{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;padding:6px 14px;font-size:13px;font-weight:600;max-width:calc(100vw - 560px);text-align:center;line-height:1.35}
+@media (max-width:1100px){#petunjuk{display:none}}
 #joystik,#bLompat{display:none}
 tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
 /* ---- jalan-jalan: obrolan, emote, pancing, zoom ---- */
@@ -134,6 +135,15 @@ tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
 #feedObrol{font-size:13.5px;line-height:1.4;display:flex;flex-direction:column;gap:4px}
 #feedObrol div{background:var(--krem);border-radius:10px;padding:4px 9px;overflow-wrap:anywhere}
 #nOnline.klik{cursor:pointer;text-decoration:underline dotted}
+/* ---- ikon garis buatan sendiri ---- */
+.ik{width:1.2em;height:1.2em;vertical-align:-.24em;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ik .isi{fill:currentColor;stroke:none}
+#emote button .ik,#zoom .ik,#bMusik .ik,#padBebas .ik{width:26px;height:26px;vertical-align:middle}
+#emote .baki [data-e="hati"]{color:#E8494A}#emote .baki [data-e="bintang"],#emote .baki [data-e="lompat"]{color:#E8A400}
+#bLompat .ik{width:30px;height:30px}
+#tutupFoto .ik,#tutupModal .ik{width:20px;height:20px;vertical-align:middle}
+.titikHijau{display:inline-block;width:10px;height:10px;border-radius:50%;background:#43B85A;border:2px solid var(--ink);margin-right:6px;vertical-align:0}
+
 /* ---- tombol musik ---- */
 #bMusik{position:fixed;left:16px;top:88px;z-index:7;width:46px;height:46px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);font-size:20px;cursor:pointer;padding:0}
 #bMusik.mati{background:#EEE4D6}
@@ -201,11 +211,11 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
 <body>
 <div id="muat">Menyiapkan pulau…</div>
 <div id="kepala" class="kartu"><div><h1>Kota Bhinneka <small>Pulau Nusantara · Kota Binatang</small></h1></div><span class="live"><i></i>LIVE</span></div>
-<div id="kam"><button data-kam="kota" class="on">Kota</button><button data-kam="dekat">Dekat</button><button data-kam="pantai">Pantai</button><button data-kam="gunung">Gunung</button><button data-kam="pulau">Seluruh pulau</button><button id="bBebas" title="Kamera bebas: terbang ke mana saja">🎥 Bebas</button><button id="bFoto" class="aksen" title="Ambil foto (P)">📷 Foto</button><button id="bSembunyi" title="Sembunyikan tampilan (H)">🙈 Sembunyikan</button></div>
-<div id="bersihTombol"><button id="bTampil" title="Tampilkan lagi (H)">👁 Tampilkan</button><button id="bFoto3" title="Ambil foto (P)">📷</button></div>
-<div id="padBebas"><button data-g="2,1">⤒</button><button data-g="1,1">▲</button><button data-g="2,-1">⤓</button><button data-g="0,-1">◀</button><button data-g="1,-1">▼</button><button data-g="0,1">▶</button></div>
+<div id="kam"><button data-kam="kota" class="on">Kota</button><button data-kam="dekat">Dekat</button><button data-kam="pantai">Pantai</button><button data-kam="gunung">Gunung</button><button data-kam="pulau">Seluruh pulau</button><button id="bBebas" title="Kamera bebas: terbang ke mana saja"><i data-ik="terbang"></i> Bebas</button><button id="bFoto" class="aksen" title="Ambil foto (P)"><i data-ik="kamera"></i> Foto</button><button id="bSembunyi" title="Sembunyikan tampilan (H)"><i data-ik="mataTutup"></i> Sembunyikan</button></div>
+<div id="bersihTombol"><button id="bTampil" title="Tampilkan lagi (H)"><i data-ik="mata"></i> Tampilkan</button><button id="bFoto3" title="Ambil foto (P)"><i data-ik="kamera"></i></button></div>
+<div id="padBebas"><button data-g="2,1"><i data-ik="naik"></i></button><button data-g="1,1"><i data-ik="atas"></i></button><button data-g="2,-1"><i data-ik="turun"></i></button><button data-g="0,-1"><i data-ik="kiri"></i></button><button data-g="1,-1"><i data-ik="bawah"></i></button><button data-g="0,1"><i data-ik="kanan"></i></button></div>
 <div id="kilat"></div>
-<button id="bMusik" title="Matikan musik">🔊</button>
+<button id="bMusik" title="Matikan musik"><i data-ik="musik"></i></button>
 <div id="panel" class="kartu">
   <button id="lipat">Data kota ▾</button>
   <div id="isi">
@@ -217,10 +227,10 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
       <div class="kas"><b id="nKas">0</b><span>Sisa kas (Koin)</span></div>
     </div>
     <div id="waktu"></div>
-    <button id="bKtp" class="tombolKtp">🪪 Buat KTP Warga</button>
-    <button id="bJalan" class="tombolKtp hijau" style="display:none">🐾 Jalan-jalan keliling pulau</button>
+    <button id="bKtp" class="tombolKtp"><i data-ik="ktp"></i> Buat KTP Warga</button>
+    <button id="bJalan" class="tombolKtp hijau" style="display:none"><i data-ik="tapak"></i> Jalan-jalan keliling pulau</button>
     <div id="nOnline" style="display:none"></div>
-    <h2 id="feedJudul" style="display:none">💬 Obrolan warga</h2>
+    <h2 id="feedJudul" style="display:none"><i data-ik="obrol"></i> Obrolan warga</h2>
     <div id="feedObrol"></div>
     <h2>Dari mana Koin datang</h2>
     <table><tbody id="rinci"></tbody></table>
@@ -236,32 +246,32 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
 </div>
 <div id="toast"></div>
 <div id="hud">
-  <div id="lokasi" class="kartu">🏖️ Pantai</div>
-  <button id="bKeluar" class="kartu">✕ Selesai jalan-jalan</button>
-  <div id="teman" class="kartu">👥 Menyambung…</div>
+  <div id="lokasi" class="kartu"><i data-ik="pin"></i> Pantai</div>
+  <button id="bKeluar" class="kartu"><i data-ik="silang"></i> Selesai jalan-jalan</button>
+  <div id="teman" class="kartu"><i data-ik="teman"></i> Menyambung…</div>
   <div id="emote">
-    <div class="baki"><button data-e="lambai" title="Melambai">👋<i>1</i></button><button data-e="hati" title="Sayang">❤️<i>2</i></button><button data-e="tawa" title="Tertawa">😄<i>3</i></button><button data-e="tepuk" title="Tepuk tangan">👏<i>4</i></button>
-      <button data-e="joget" title="Joget">💃<i>5</i></button><button data-e="duduk" title="Duduk">🪑<i>6</i></button><button data-e="sedih" title="Sedih">😢<i>7</i></button><button data-e="lompat" title="Lompat girang">⭐</button></div>
-    <div class="barisTombol"><button id="bFoto2" title="Foto">📷</button><button id="bPancing" title="Memancing (F)">🎣</button><button id="bEmote" title="Emote">😊</button></div>
+    <div class="baki"><button data-e="lambai" title="Melambai"><i data-ik="lambai"></i><i>1</i></button><button data-e="hati" title="Sayang"><i data-ik="hati"></i><i>2</i></button><button data-e="tawa" title="Tertawa"><i data-ik="tawa"></i><i>3</i></button><button data-e="tepuk" title="Tepuk tangan"><i data-ik="tepuk"></i><i>4</i></button>
+      <button data-e="joget" title="Joget"><i data-ik="joget"></i><i>5</i></button><button data-e="duduk" title="Duduk"><i data-ik="duduk"></i><i>6</i></button><button data-e="sedih" title="Sedih"><i data-ik="sedih"></i><i>7</i></button><button data-e="lompat" title="Lompat girang"><i data-ik="bintang"></i></button></div>
+    <div class="barisTombol"><button id="bFoto2" title="Foto"><i data-ik="kamera"></i></button><button id="bPancing" title="Memancing (F)"><i data-ik="kail"></i></button><button id="bEmote" title="Emote"><i data-ik="senyum"></i></button></div>
   </div>
-  <div id="zoom"><button id="bZoomDekat" title="Kamera mendekat (+)">+</button><button id="bZoomJauh" title="Kamera menjauh (−)">−</button></div>
+  <div id="zoom"><button id="bZoomDekat" title="Kamera mendekat (+)"><i data-ik="tambah"></i></button><button id="bZoomJauh" title="Kamera menjauh (−)"><i data-ik="kurang"></i></button></div>
   <div id="tangkap" class="kartu" style="display:none"></div>
-  <div id="seru" style="display:none">❗ Umpan dimakan! Tekan F / 🎣</div>
-  <div id="obrol"><div id="logObrol"></div><div id="ruang"><button data-r="g" class="on">🌍 Global</button><button data-r="d">📍 Dekat</button></div>
+  <div id="seru" style="display:none"><i data-ik="seru"></i> Umpan dimakan! Tekan F / <i data-ik="kail"></i></div>
+  <div id="obrol"><div id="logObrol"></div><div id="ruang"><button data-r="g" class="on"><i data-ik="dunia"></i> Global</button><button data-r="d"><i data-ik="pin"></i> Dekat</button></div>
     <form id="formObrol" autocomplete="off"><input id="isiObrol" maxlength="120" placeholder="Tulis untuk semua warga…" enterkeyhint="send"><button>Kirim</button></form></div>
-  <button id="bObrol">💬 Obrolan</button>
+  <button id="bObrol"><i data-ik="obrol"></i> Obrolan</button>
   <div id="petunjuk" class="kartu">WASD = jalan · Shift = lari · Spasi = lompat · F = mancing · Enter = ngobrol · 1–7 = emote · scroll / + − = jarak kamera</div>
   <div id="joystik"><div id="tombolJoy"></div></div>
-  <button id="bLompat">⤴<br>Lompat</button>
+  <button id="bLompat"><i data-ik="lompat"></i><br>Lompat</button>
 </div>
 <div id="modalFoto"><div class="kotak kartu">
-  <button id="tutupFoto" aria-label="Tutup">✕</button>
-  <h2 class="judulM">📷 Foto Kota Bhinneka</h2>
+  <button id="tutupFoto" aria-label="Tutup"><i data-ik="silang"></i></button>
+  <h2 class="judulM"><i data-ik="kamera"></i> Foto Kota Bhinneka</h2>
   <div class="fotoSusun">
     <div class="wadahFoto"><canvas id="kanvasFoto"></canvas></div>
     <div class="opsiFoto">
       <label>Bingkai</label>
-      <div id="pilihBingkai" class="pilihan"><button data-b="klasik" class="on">🟨 Klasik</button><button data-b="pantai">🏖️ Pantai</button><button data-b="polaroid">🖼️ Polaroid</button><button data-b="hologram">✨ Hologram</button><button data-b="tanpa">⬜ Tanpa</button></div>
+      <div id="pilihBingkai" class="pilihan"><button data-b="klasik" class="on"><i data-ik="bingkai"></i> Klasik</button><button data-b="pantai"><i data-ik="pantai"></i> Pantai</button><button data-b="polaroid"><i data-ik="polaroid"></i> Polaroid</button><button data-b="hologram"><i data-ik="kilau"></i> Hologram</button><button data-b="tanpa"><i data-ik="kosong"></i> Tanpa</button></div>
       <label>Ukuran</label>
       <div id="pilihRasio" class="pilihan"><button data-r="asli" class="on">Layar</button><button data-r="persegi">1:1 Feed</button><button data-r="potret">4:5</button><button data-r="cerita">9:16 Story</button><button data-r="lebar">16:9</button></div>
       <label for="teksFoto">Tulisan (boleh kosong)</label>
@@ -269,18 +279,18 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
       <label class="cek"><input type="checkbox" id="tglFoto" checked> Tampilkan tanggal</label>
       <label class="cek"><input type="checkbox" id="tagIgFoto" checked> Tampilkan ajakan "Jangan lupa tag IG"</label>
       <p id="tagFoto" class="tagFoto"></p>
-      <button id="unduhFoto" class="tombolKtp">⬇ Simpan foto</button>
-      <button id="bagiFoto" class="tombolKtp hijau" style="display:none">📤 Bagikan</button>
+      <button id="unduhFoto" class="tombolKtp"><i data-ik="unduh"></i> Simpan foto</button>
+      <button id="bagiFoto" class="tombolKtp hijau" style="display:none"><i data-ik="bagi"></i> Bagikan</button>
     </div>
   </div>
 </div></div>
 <div id="modal"><div class="kotak kartu">
-  <button id="tutupModal" aria-label="Tutup">✕</button>
+  <button id="tutupModal" aria-label="Tutup"><i data-ik="silang"></i></button>
   <div id="formKtp">
-    <h2 class="judulM">🪪 Buat KTP Warga</h2>
+    <h2 class="judulM"><i data-ik="ktp"></i> Buat KTP Warga</h2>
     <p class="kecilM">KTP ini <b>fiktif</b>, khusus permainan Kota Binatang. Jangan isi nama lengkap, NIK asli, alamat, atau data pribadi lain.</p>
     <div class="susun">
-      <div class="kiri"><div id="wadahPratinjau"></div><div id="namaJenis" class="kecilM"></div><div class="kecilM petunjuk">↔ geser untuk memutar</div></div>
+      <div class="kiri"><div id="wadahPratinjau"></div><div id="namaJenis" class="kecilM"></div><div class="kecilM petunjuk"><i data-ik="putar"></i> geser untuk memutar</div></div>
       <div class="kanan">
         <label for="namaKtp">Nama panggilan</label>
         <input id="namaKtp" maxlength="20" autocomplete="off" placeholder="misalnya: Budi">
@@ -297,15 +307,15 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
     <div id="pesanKtp"></div>
   </div>
   <div id="hasilKtp" style="display:none">
-    <h2 class="judulM">🎉 Selamat datang, warga!</h2>
+    <h2 class="judulM"><i data-ik="pesta"></i> Selamat datang, warga!</h2>
     <p class="kecilM">KTP-mu: <b id="ktpku"></b>. Binatangmu sekarang tinggal di Kota Bhinneka dengan papan nama.</p>
     <canvas id="kartu" width="1000" height="620"></canvas>
-    <a id="unduhKtp" class="tombolKtp" href="#">⬇ Simpan gambar KTP</a>
-    <button id="bJalan2" class="tombolKtp hijau" style="display:none">🐾 Jalan-jalan dengan binatangku</button>
+    <a id="unduhKtp" class="tombolKtp" href="#"><i data-ik="unduh"></i> Simpan gambar KTP</a>
+    <button id="bJalan2" class="tombolKtp hijau" style="display:none"><i data-ik="tapak"></i> Jalan-jalan dengan binatangku</button>
     <p class="kecilM">Pamerkan KTP-mu di story dan tag akun Kota Binatang!</p>
   </div>
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="app.js?v=f6ecbdbe"></script>
+<script src="app.js?v=92844dbb"></script>
 </body>
 </html>

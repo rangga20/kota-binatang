@@ -64,6 +64,47 @@ for (let i = 0; i < 12; i++) { const g = new THREE.Group(), a = i / 12 * 6.28 + 
   for (let j = 0; j < 5; j++) { const s = 8 + R() * 8; const b = new THREE.Mesh(new THREE.SphereGeometry(s, 20, 14), mt); b.position.set((j - 2) * 9 + R() * 3, R() * 3 + (j % 2) * 2, R() * 3); b.scale.y = .8; g.add(b); }
   g.position.set(Math.sin(a) * d, 50 + R() * 40, Math.cos(a) * d - 80); g.lookAt(0, g.position.y, -80); scene.add(g); AWAN.push({g, a, d}); }
 
+/* ================= IKON Kota Bhinneka: garis sederhana buatan sendiri (bukan emoji keyboard) ================= */
+/* Pakai: <i data-ik="kamera"></i> di HTML (diganti otomatis), atau ikon('kamera') di kode. Semua 24×24, garis bulat, warna ikut teks. */
+const IKON = {
+  musik: '<path d="M9 18V5.5l10-2.5v12.5"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="16.5" cy="15.5" r="2.6"/>',
+  musikMati: '<path d="M9 18V5.5l10-2.5v12.5"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="16.5" cy="15.5" r="2.6"/><path d="M3 3l18 18"/>',
+  kamera: '<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8.5 7l1.6-2.6h3.8L15.5 7"/><circle cx="12" cy="13.5" r="3.4"/>',
+  terbang: '<path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
+  mataTutup: '<path d="M3 12s3.6-6 9-6c1.6 0 3 .5 4.3 1.2M21 12s-3.6 6-9 6c-1.6 0-3-.5-4.3-1.2"/><path d="M4 20L20 4"/><path d="M9.6 14.4a3.4 3.4 0 0 1 4.8-4.8"/>',
+  mata: '<path d="M3 12s3.6-6 9-6 9 6 9 6-3.6 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="3.2"/>',
+  kail: '<path d="M4 21L18 4"/><path d="M18 4v10"/><path d="M18 14a2.6 2.6 0 1 1-2.6 2.6"/><circle cx="7.5" cy="16.5" r="1.6"/>',
+  senyum: '<circle cx="12" cy="12" r="9"/><path d="M8.3 14a4.6 4.6 0 0 0 7.4 0"/><path d="M9 9.6v.2M15 9.6v.2"/>',
+  obrol: '<path d="M4 5.5h16v10.5H10l-4.5 3.8V16H4z"/><path d="M8 10h.1M12 10h.1M16 10h.1"/>',
+  tambah: '<path d="M12 5v14M5 12h14"/>', kurang: '<path d="M5 12h14"/>', silang: '<path d="M6 6l12 12M18 6L6 18"/>',
+  atas: '<path d="M6 15l6-6 6 6"/>', bawah: '<path d="M6 9l6 6 6-6"/>', kiri: '<path d="M15 6l-6 6 6 6"/>', kanan: '<path d="M9 6l6 6-6 6"/>',
+  naik: '<path d="M6 12l6-6 6 6M6 18l6-6 6 6"/>', turun: '<path d="M6 6l6 6 6-6M6 12l6 6 6-6"/>',
+  lompat: '<path d="M5 19c2-8 5-12 7-12s5 4 7 12"/><path d="M9 5l3-3 3 3"/>',
+  lambai: '<path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V11M11 10.5V4.8a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v6.5"/><path d="M17 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.6a6.5 6.5 0 0 1-5.3-2.8L4.6 15a1.6 1.6 0 0 1 2.6-1.8L8 14.2"/>',
+  hati: '<path class="isi" d="M12 20.5S3.5 15.3 3.5 9.4A4.4 4.4 0 0 1 12 7.2a4.4 4.4 0 0 1 8.5 2.2c0 5.9-8.5 11.1-8.5 11.1z"/>',
+  tawa: '<circle cx="12" cy="12" r="9"/><path d="M7.6 13h8.8a4.4 4.4 0 0 1-8.8 0z"/><path d="M8 9.8l1.5-1.3 1.5 1.3M13 9.8l1.5-1.3 1.5 1.3"/>',
+  tepuk: '<path d="M12 3v3.5M12 17.5V21M3 12h3.5M17.5 12H21M5.6 5.6l2.5 2.5M15.9 15.9l2.5 2.5M18.4 5.6l-2.5 2.5M8.1 15.9l-2.5 2.5"/><circle cx="12" cy="12" r="2"/>',
+  joget: '<path d="M8 17V6l9-2v11"/><circle cx="5.8" cy="17" r="2.2"/><circle cx="14.8" cy="15" r="2.2"/><path d="M20 7.5l1.5-1M20.5 11h1.5"/>',
+  duduk: '<path d="M7 3.5v9h10v-9"/><path d="M5 12.5h14M7 12.5V21M17 12.5V21M7 17h10"/>',
+  sedih: '<circle cx="12" cy="12" r="9"/><path d="M8.3 16.4a4.6 4.6 0 0 1 7.4 0"/><path d="M9 9.6v.2M15 9.6v.2"/><path d="M17.2 11.8c0 .8-.5 1.4-1.1 1.4s-1.1-.6-1.1-1.4c0-.7 1.1-2.2 1.1-2.2s1.1 1.5 1.1 2.2z"/>',
+  bintang: '<path class="isi" d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/>',
+  ktp: '<rect x="2.8" y="5" width="18.4" height="14" rx="2.6"/><circle cx="8.4" cy="10.6" r="2"/><path d="M5.6 15.8c.6-1.3 1.6-2 2.8-2s2.2.7 2.8 2M14 10h4.2M14 13.6h3"/>',
+  tapak: '<ellipse class="isi" cx="12" cy="15.6" rx="4.2" ry="3.6"/><circle class="isi" cx="6.3" cy="10.2" r="1.9"/><circle class="isi" cx="9.8" cy="6.4" r="1.9"/><circle class="isi" cx="14.2" cy="6.4" r="1.9"/><circle class="isi" cx="17.7" cy="10.2" r="1.9"/>',
+  unduh: '<path d="M12 4v11M7 10.5l5 5 5-5"/><path d="M5 19.5h14"/>', bagi: '<path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M5 13v6.5h14V13"/>',
+  teman: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5"/><circle cx="16.8" cy="9.5" r="2.5"/><path d="M15.5 14.6c2.2 0 4 1.6 4.8 4.4"/>',
+  pin: '<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/>',
+  ikan: '<path d="M3 12c3-4.2 7-5.5 10.5-5 2.7.4 4.8 2.3 5.8 5-1 2.7-3.1 4.6-5.8 5-3.5.5-7.5-.8-10.5-5z"/><path d="M19.3 12l2.2-3v6z"/><path d="M8 11.2v.2"/>',
+  dunia: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 3.8 5.7 3.8 9s-1.2 6.3-3.8 9c-2.6-2.7-3.8-5.7-3.8-9S9.4 5.7 12 3z"/>',
+  kirim: '<path d="M4 12l16-8-6 17-2.6-6.6z"/><path d="M11.4 14.4L20 4"/>', seru: '<path d="M12 4v10"/><path d="M12 19v.2"/>',
+  putar: '<path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/>', pesta: '<path d="M4 20l5-14 9 9z"/><path d="M14 4l1 2M18 6l2-1M17 10l2 .5"/>',
+  bingkai: '<rect x="3" y="3" width="18" height="18" rx="2.5"/><rect x="7" y="7" width="10" height="10" rx="1"/>',
+  pantai: '<path d="M3 19c2-1.2 4-1.2 6 0s4 1.2 6 0 4-1.2 6 0"/><circle cx="17" cy="7" r="3"/><path d="M6 16l3-9 3 9"/>',
+  polaroid: '<rect x="4" y="3" width="16" height="18" rx="1.5"/><rect x="7" y="6" width="10" height="9"/>',
+  kilau: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+  kosong: '<rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/>'};
+function ikon(n) { return `<svg class="ik" viewBox="0 0 24 24" aria-hidden="true">${IKON[n] || ''}</svg>`; }
+document.querySelectorAll('[data-ik]').forEach(el => { el.outerHTML = ikon(el.dataset.ik); });
+
 /* ===== dari video: pulau ===== */
 /* ---------- bahan pulau ---------- */
 const pasirTex = tekstur(256, 256, (x, w, h) => { x.fillStyle = '#FFE2A8'; x.fillRect(0, 0, w, h); const r = rng(21);
@@ -808,7 +849,7 @@ $('#kirimKtp').onclick = async () => { const nama = $('#namaKtp').value.trim().r
   psn.className = ''; psn.textContent = 'Membuat KTP…'; $('#kirimKtp').disabled = true;
   try { const r = await fetch(ktpUrl(), {method: 'POST', headers: {'content-type': 'text/plain'}, body: JSON.stringify(Object.assign({nama, jenis: PIL.jenis.id}, opsiPil()))}); const j = await r.json();
     if (!j.ok) { psn.className = 'salah'; psn.textContent = j.pesan || 'Gagal membuat KTP.'; return; }
-    psn.textContent = ''; $('#bKtp').textContent = '🪪 Lihat KTP-ku'; localStorage.setItem(KTP_SIMPAN, JSON.stringify(j.ktp));
+    psn.textContent = ''; $('#bKtp').innerHTML = ikon('ktp') + ' Lihat KTP-ku'; localStorage.setItem(KTP_SIMPAN, JSON.stringify(j.ktp));
     $('#formKtp').style.display = 'none'; $('#hasilKtp').style.display = ''; gambarKartu(j.ktp);
     toast(`Selamat datang, ${j.ktp.nama}! 🪪`); bunyi('ktp'); tampilTombolJalan(); muat(false); }
   catch (e) { psn.className = 'salah'; psn.textContent = 'Gagal terhubung. Coba lagi sebentar lagi.'; }
@@ -842,7 +883,7 @@ function gambarKartu(k) { const J = JENIS_ID[k.jenis] || JENIS[0], c = $('#kartu
   x.fillStyle = '#2B2238'; x.font = "500 22px 'Fredoka', sans-serif"; x.textAlign = 'center'; x.fillText('KTP fiktif untuk permainan · bukan dokumen resmi · Koin bukan Rupiah', W2 / 2, H2 - 34);
   $('#unduhKtp').href = c.toDataURL('image/png'); $('#unduhKtp').download = `KTP-${nomorKtp(k.no)}-${k.nama.replace(/[^\w-]+/g, '_')}.png`;
   $('#ktpku').textContent = `${J.e} ${k.nama} · ${nomorKtp(k.no)}`; }
-{ const s = JSON.parse(localStorage.getItem(KTP_SIMPAN) || 'null'); if (s) { $('#bKtp').textContent = '🪪 Lihat KTP-ku'; } }
+{ const s = JSON.parse(localStorage.getItem(KTP_SIMPAN) || 'null'); if (s) { $('#bKtp').innerHTML = ikon('ktp') + ' Lihat KTP-ku'; } }
 
 /* ================= KAMERA (geser putar, cubit/scroll zoom) ================= */
 const PRESET = {kota: {th: .12, ph: 1.0, r: HP ? 70 : 58, tgt: [PUSAT_KOTA[0], 2, PUSAT_KOTA[1] + 2]}, dekat: {th: .05, ph: 1.25, r: HP ? 30 : 24, tgt: [PUSAT[0], 2.6, PUSAT[1] - 1]},
@@ -980,7 +1021,7 @@ function langkahJelajah(t, dt) { const K = JL.kunci;
   const kx = lerp(JL.x, cx, JL.fb), ky = lerp(JL.y + 2.2, cyy, JL.fb), kz = lerp(JL.z, cz, JL.fb);
   const kk = 1 - Math.exp(-dt * 6); cam.position.lerp(_vJ.set(kx, ky, kz), kk); aturTajuk(JL.x, JL.y + 2.4, JL.z, cam.position.x, cam.position.y, cam.position.z); cam.lookAt(JL.x, JL.y + 2.2 + Math.min(1.6, JL.jarak * .06), JL.z);   /* sedikit ke atas: gelembung obrolan tetap terlihat */
   if (m > .05 && !jari.size) JL.kamYaw += Math.atan2(Math.sin(JL.arah - JL.kamYaw), Math.cos(JL.arah - JL.kamYaw)) * Math.min(1, dt * 1.2);   /* kamera pelan-pelan ke belakang binatang */
-  const zn = zona(JL.x, JL.z); if (zn !== JL.zona) { JL.zona = zn; $('#lokasi').textContent = zn; }
+  const zn = zona(JL.x, JL.z); if (zn !== JL.zona) { JL.zona = zn; $('#lokasi').innerHTML = ikon('pin') + ' ' + zn.split(' ').slice(1).join(' '); }
   if (!JL.sapa && Math.hypot(JL.x - PUSAT[0], JL.z - PUSAT[1] - .6) < 4.2) { JL.sapa = true; const k = ktpSaya(); toast(`Joko: "Halo, ${k ? k.nama : 'warga'}! Selamat datang di Kota Bhinneka!" 🎩`); }
   if (JL.sapa && Math.hypot(JL.x - PUSAT[0], JL.z - PUSAT[1]) > 12) JL.sapa = false; }
 
@@ -1161,7 +1202,7 @@ function pamerIkan(p, i) { const m = modelIkan(i); bunyiDari(p, 'dapat', !!(IKAN
 const PANCING = {fase: '', T: 0, ikan: -1};
 const TANGKAPAN_SIMPAN = 'ikan_kota_binatang';
 function catatanIkan() { return JSON.parse(localStorage.getItem(TANGKAPAN_SIMPAN) || 'null') || {total: 0, jenis: {}, terbesar: null}; }
-function tampilTangkapan() { const c = catatanIkan(), el = $('#tangkap'); el.innerHTML = `🎣 <b>${c.total}</b><span class="rinci"> tangkapan` + (c.terbesar ? ` · terbesar ${c.terbesar.n} ${c.terbesar.cm} cm` : '') + '</span>'; el.style.display = c.total ? '' : 'none'; }
+function tampilTangkapan() { const c = catatanIkan(), el = $('#tangkap'); el.innerHTML = `${ikon('ikan')} <b>${c.total}</b><span class="rinci"> tangkapan` + (c.terbesar ? ` · terbesar ${c.terbesar.n} ${c.terbesar.cm} cm` : '') + '</span>'; el.style.display = c.total ? '' : 'none'; }
 function airDepan(x, z, a) { const bx = x + Math.sin(a) * 7, bz = z + Math.cos(a) * 7; return pantaiS(bx, bz) < -1.2 && airDi(bx, bz, tAnim) - tanahJalan(bx, bz) > .35; }
 function tekanMancing() { if (!JL.aktif) return;
   if (!PANCING.fase) {
@@ -1193,8 +1234,8 @@ function langkahMancing(dt) { if (!PANCING.fase) return; PANCING.T += dt; const 
 const MP = {ws: null, mau: false, peran: '', pemain: new Map(), kirimT: 0, terakhir: '', ulang: 0, jeda: null, online: 0, saya: 0};
 const mainUrl = () => (CFG.main_url || '').replace(/^http/, 'ws').replace(/\/?$/, '') + '/main';
 function aturTeman() { const n = MP.pemain.size, el = $('#teman');
-  el.textContent = !MP.ws || MP.ws.readyState !== 1 ? '🔌 Menyambung ke ruang main bareng…' : n ? `👥 ${n} warga jalan-jalan bersamamu` : '👥 Belum ada warga lain — ajak temanmu!';
-  const o = $('#nOnline'); if (MP.peran === 'lihat' && MP.ws && MP.ws.readyState === 1) { o.textContent = n ? `🟢 ${n} warga sedang jalan-jalan — klik untuk melihat` : ''; o.style.display = n ? '' : 'none'; o.classList.toggle('klik', !!n); } }
+  el.innerHTML = ikon('teman') + ' ' + (!MP.ws || MP.ws.readyState !== 1 ? 'Menyambung ke ruang main bareng…' : n ? `${n} warga jalan-jalan bersamamu` : 'Belum ada warga lain — ajak temanmu!');
+  const o = $('#nOnline'); if (MP.peran === 'lihat' && MP.ws && MP.ws.readyState === 1) { o.innerHTML = n ? `<span class="titikHijau"></span>${n} warga sedang jalan-jalan — klik untuk melihat` : ''; o.style.display = n ? '' : 'none'; o.classList.toggle('klik', !!n); } }
 function buka(peran) { if (!CFG.main_url) { $('#teman').style.display = 'none'; return; }
   if (MP.ws && MP.peran === peran && MP.ws.readyState <= 1) return;
   tutupWs(); MP.peran = peran; MP.mau = true; clearTimeout(MP.jeda);
@@ -1206,7 +1247,7 @@ function buka(peran) { if (!CFG.main_url) { $('#teman').style.display = 'none'; 
   ws.onclose = () => { if (MP.ws && MP.ws !== ws) return;   /* sambungan lama yang sudah diganti */
     MP.ws = null; hapusSemuaTeman(); aturTeman();
     if (MP.mau && MP.peran === peran && (peran === 'lihat' ? !JL.aktif && !document.hidden : JL.aktif)) { const tunggu = Math.min(30000, 2000 * 2 ** MP.ulang++); MP.jeda = setTimeout(() => buka(peran), tunggu); }
-    if (!MP.mau && JL.aktif) $('#teman').textContent = '🐾 Jalan-jalan sendiri'; }; }
+    if (!MP.mau && JL.aktif) $('#teman').innerHTML = ikon('tapak') + ' Jalan-jalan sendiri'; }; }
 function terima(m) {
   if (m.t === 'halo') { MP.saya = m.saya; hapusSemuaTeman(); m.pemain.forEach(tambahTeman); aturTeman(); $('#logObrol').innerHTML = ''; $('#feedObrol').innerHTML = ''; (m.obrolan || []).forEach(o => tulisObrol(o, true)); }
   else if (m.t === 'baru') { tambahTeman(m.p); aturTeman(); if (JL.aktif) { bunyi('masuk'); toast(`${m.p.nama} ikut jalan-jalan! 🐾`); tulisSistem(`🐾 ${m.p.nama} ikut jalan-jalan`); } }
@@ -1283,7 +1324,7 @@ async function cekOnline() { if (!CFG.main_url || document.hidden) return;
   if (!JL.aktif && (!MP.ws || MP.peran !== 'lihat')) buka('lihat');
   if (MP.ws && MP.ws.readyState === 1) return;
   try { const j = await fetch(CFG.main_url.replace(/\/?$/, '') + '/jumlah').then(r => r.json()); MP.online = j.online || 0;
-    const el = $('#nOnline'); el.textContent = MP.online ? `🟢 ${MP.online} warga sedang jalan-jalan sekarang` : ''; el.style.display = MP.online ? '' : 'none'; } catch (e) {} }
+    const el = $('#nOnline'); el.innerHTML = MP.online ? `<span class="titikHijau"></span>${MP.online} warga sedang jalan-jalan sekarang` : ''; el.style.display = MP.online ? '' : 'none'; } catch (e) {} }
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (MP.peran === 'lihat') { MP.mau = false; tutupWs(); } } else if (!JL.aktif) buka('lihat'); });
 tampilTangkapan();
 
@@ -1492,9 +1533,12 @@ if (navigator.canShare && navigator.canShare({files: [new File([''], 'a.png', {t
    Pilihan nyala/mati disimpan di perangkat pengunjung. Saat ada obrolan musik mengecil sebentar. */
 const MUSIK = {ctx: null, gain: null, src: null, buf: null, mau: localStorage.getItem('musik_kota') !== 'mati', memuat: false, VOL: 1, redam: 0};
 const MUSIK_PANJANG = 32 * 3 * 60 / 84;   /* 32 birama 3/4 pada 84 ketuk/menit */
-function tombolMusik() { const b = $('#bMusik'); b.textContent = MUSIK.mau ? '🔊' : '🔇'; b.title = MUSIK.mau ? 'Matikan suara (musik & efek)' : 'Nyalakan suara (musik & efek)'; b.classList.toggle('mati', !MUSIK.mau); }
-async function siapkanMusik() { if (MUSIK.ctx || MUSIK.memuat) return; MUSIK.memuat = true;
-  try { const AC = window.AudioContext || window.webkitAudioContext; MUSIK.ctx = new AC(); MUSIK.gain = MUSIK.ctx.createGain(); MUSIK.gain.gain.value = 0; MUSIK.gain.connect(MUSIK.ctx.destination);
+function tombolMusik() { const b = $('#bMusik'); b.innerHTML = ikon(MUSIK.mau ? 'musik' : 'musikMati'); b.title = MUSIK.mau ? 'Matikan musik (efek suara tetap bunyi)' : 'Nyalakan musik'; b.classList.toggle('mati', !MUSIK.mau); }
+/* konteks suara dibuat pada sentuhan pertama — dipakai musik DAN efek suara */
+function siapkanSuara() { if (MUSIK.ctx) { if (MUSIK.ctx.state === 'suspended' && !document.hidden) MUSIK.ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; MUSIK.ctx = new AC(); MUSIK.gain = MUSIK.ctx.createGain(); MUSIK.gain.gain.value = 0; MUSIK.gain.connect(MUSIK.ctx.destination); }
+async function siapkanMusik() { siapkanSuara(); if (!MUSIK.ctx || MUSIK.src || MUSIK.memuat) return; MUSIK.memuat = true;
+  try {
     const data = await fetch('musik-pulau.mp3?v=3').then(r => { if (!r.ok) throw r.status; return r.arrayBuffer(); });
     MUSIK.buf = await new Promise((ok, gagal) => MUSIK.ctx.decodeAudioData(data, ok, gagal));
     /* lewati sunyi bawaan encoder MP3 di awal berkas, supaya titik ulang pas */
@@ -1504,22 +1548,23 @@ async function siapkanMusik() { if (MUSIK.ctx || MUSIK.memuat) return; MUSIK.mem
   } catch (e) { /* musik gagal dimuat: konteks suara tetap dipakai untuk efek */ } finally { MUSIK.memuat = false; } }
 function aturVolMusik(lama = .5) { if (!MUSIK.ctx) return; const g = MUSIK.gain.gain, t = MUSIK.ctx.currentTime, tuju = MUSIK.mau && !document.hidden ? MUSIK.VOL * (MUSIK.redam > t ? .35 : 1) : 0;
   g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(tuju, t + lama);
-  if (tuju > 0 && MUSIK.ctx.state === 'suspended') MUSIK.ctx.resume(); if (tuju === 0) setTimeout(() => { if (MUSIK.ctx && (!MUSIK.mau || document.hidden)) MUSIK.ctx.suspend(); }, lama * 1000 + 100); }
+  if (!document.hidden && MUSIK.ctx.state === 'suspended') MUSIK.ctx.resume(); if (document.hidden) setTimeout(() => { if (MUSIK.ctx && document.hidden) MUSIK.ctx.suspend(); }, lama * 1000 + 100); }   /* musik mati ≠ konteks mati: efek suara tetap bunyi */
 function redamMusik(detik = 3) { if (!MUSIK.ctx || !MUSIK.mau) return; MUSIK.redam = MUSIK.ctx.currentTime + detik; aturVolMusik(.3); clearTimeout(MUSIK._t); MUSIK._t = setTimeout(() => aturVolMusik(1.2), detik * 1000); }
 $('#bMusik').addEventListener('click', e => { e.stopPropagation(); MUSIK.mau = !MUSIK.mau; localStorage.setItem('musik_kota', MUSIK.mau ? 'nyala' : 'mati'); tombolMusik();
-  if (MUSIK.mau) { if (!MUSIK.ctx) siapkanMusik(); else aturVolMusik(1); toast('🔊 Suara nyala · Musik: Angin Pulau Nusantara'); } else { aturVolMusik(.4); toast('🔇 Musik & efek suara dimatikan'); } });
+  if (MUSIK.mau) { if (!MUSIK.src) siapkanMusik(); else aturVolMusik(1); toast('Musik nyala · Angin Pulau Nusantara'); } else { aturVolMusik(.4); toast('Musik dimatikan · efek suara tetap bunyi'); } });
 /* sentuhan / klik / tombol pertama di mana saja = musik mulai (bila tidak dimatikan) */
-const _mulaiMusik = () => { if (MUSIK.mau) { if (!MUSIK.ctx) siapkanMusik(); else aturVolMusik(1); } ['pointerdown', 'keydown'].forEach(n => removeEventListener(n, _mulaiMusik, true)); };
+const _mulaiMusik = () => { siapkanSuara(); if (MUSIK.mau) { if (!MUSIK.src) siapkanMusik(); else aturVolMusik(1); } ['pointerdown', 'keydown'].forEach(n => removeEventListener(n, _mulaiMusik, true)); };
 ['pointerdown', 'keydown'].forEach(n => addEventListener(n, _mulaiMusik, true));
 document.addEventListener('visibilitychange', () => aturVolMusik(document.hidden ? .2 : 1));
 tombolMusik();
 
 /* ================= EFEK SUARA (disintesis langsung di browser, tanpa berkas — ringan & bebas hak cipta) ================= */
-/* Ikut tombol 🔊: kalau suara dimatikan, efek juga diam. Suara dari binatang lain (pemain/NPC) makin pelan bila jauh dari kamera. */
-const EFEK_VOL = .6;
+/* Efek suara TIDAK ikut tombol musik (tetap bunyi walau musik dimatikan). Suara dari binatang lain (pemain/NPC) makin pelan bila jauh dari kamera. */
+const EFEK_VOL = 2.6;   /* dikeraskan; kompresor di belakangnya mencegah suara pecah */
 let _derau = null;
-function _sfx() { const c = MUSIK.ctx; if (!c || !MUSIK.mau || document.hidden) return null; if (c.state === 'suspended') c.resume();
-  if (!MUSIK.sfx) { MUSIK.sfx = c.createGain(); MUSIK.sfx.gain.value = EFEK_VOL; MUSIK.sfx.connect(c.destination); }
+function _sfx() { siapkanSuara(); const c = MUSIK.ctx; if (!c || document.hidden) return null; if (c.state === 'suspended') c.resume();
+  if (!MUSIK.sfx) { const k = c.createDynamicsCompressor(); k.threshold.value = -16; k.knee.value = 8; k.ratio.value = 5; k.attack.value = .002; k.release.value = .18; k.connect(c.destination);
+    MUSIK.sfx = c.createGain(); MUSIK.sfx.gain.value = EFEK_VOL; MUSIK.sfx.connect(k); }
   if (!_derau) { _derau = c.createBuffer(1, c.sampleRate, c.sampleRate); const d = _derau.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
   return c; }
 /* nada: frekuensi meluncur f0→f1 */
