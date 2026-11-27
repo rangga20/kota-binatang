@@ -140,6 +140,9 @@ tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
 .sawerBtn{background:#FF8AB0!important;color:var(--ink)}
 .sawerBtn .ik .isi{fill:#E8494A}
 #penyokong{display:flex;flex-wrap:wrap;gap:6px}
+#mitra{display:flex;flex-wrap:wrap;gap:6px}.mitraChip{text-decoration:none;color:var(--ink);background:#E6F6FF}.lblIklan{font-style:normal;font-size:11px;background:#2B2238;color:#FFD447;border-radius:6px;padding:0 5px;margin-left:4px}
+#modalIklan{position:fixed;inset:0;z-index:10;background:rgba(30,40,80,.45);display:none;align-items:center;justify-content:center;padding:12px}#modalIklan.on{display:flex}
+#modalIklan .kotak{position:relative;width:min(440px,100%);padding:18px 20px 20px}#tutupIklan{position:absolute;right:12px;top:10px;width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);background:#fff;cursor:pointer}#tutupIklan .ik{width:20px;height:20px;vertical-align:middle}
 .tingkat{margin-top:10px;font-size:13px;line-height:1.45}.tingkat code{background:#fff;border:2px solid var(--ink);border-radius:6px;padding:0 4px;font-weight:700}
 .tk{display:inline-block;margin:4px 4px 0 0;padding:2px 9px;border:2px solid var(--ink);border-radius:14px;font-weight:700;font-size:12.5px}.tk1{background:#F6C79A}.tk2{background:#E6EBF3}.tk3{background:#FFE98A}
 .chip.sokong{background:#FFE0EA}.chip.sokong .ik{color:#E8494A}
@@ -250,6 +253,8 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
       <div class="tingkat"><b>Punya KTP?</b> Tulis nomor KTP-mu (mis. <code>KB-00001</code>) di pesan saweran. Total saweranmu memberi tampilan khusus:<span class="tk tk1">★ Perunggu · Rp10.000</span><span class="tk tk2">★ Perak · Rp50.000</span><span class="tk tk3">★ Emas · Rp100.000</span><span class="kecilAbu">Papan nama & lencana berwarna, kilau (Perak/Emas), dan KTP edisi khusus. Hanya tampilan, bukan keunggulan permainan.</span></div>
       <h2 id="judulPenyokong" style="display:none">Terima kasih, penyokong!</h2><div id="penyokong"></div>
     </div>
+    <h2><i data-ik="pin"></i> Mitra Kota Bhinneka</h2><div id="mitra"></div>
+    <p id="mitraKosong" class="kecilAbu">Punya usaha? Tampilkan di papan reklame atau kios di Pulau Nusantara — terlihat di website & video. DM Instagram <b id="mitraIg"></b>.</p>
     <h2 id="feedJudul" style="display:none"><i data-ik="obrol"></i> Obrolan warga</h2>
     <div id="feedObrol"></div>
     <h2>Dari mana Koin datang</h2>
@@ -304,6 +309,8 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
     </div>
   </div>
 </div></div>
+<div id="modalIklan"><div class="kotak kartu"><button id="tutupIklan" aria-label="Tutup"><i data-ik="silang"></i></button>
+  <h2 class="judulM" id="iklanJudul"></h2><p id="iklanIsi" class="kecilM"></p><a id="iklanLink" class="tombolKtp" href="#" target="_blank" rel="sponsored noopener"></a></div></div>
 <div id="modal"><div class="kotak kartu">
   <button id="tutupModal" aria-label="Tutup"><i data-ik="silang"></i></button>
   <div id="formKtp">
@@ -337,6 +344,6 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
   </div>
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="app.js?v=e61f7479"></script>
+<script src="app.js?v=cd795c4a"></script>
 </body>
 </html>

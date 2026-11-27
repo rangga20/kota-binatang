@@ -896,7 +896,7 @@ function isiPanel(d, h) {
   const tg = d.diperbarui ? new Date(d.diperbarui) : null;
   $('#waktu').textContent = tg ? 'Diperbarui ' + tg.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) : '';
   $('#demo').style.display = d.demo ? '' : 'none'; $('#tunda').style.display = d.tertunda ? '' : 'none';
-  isiSawer(d, h);
+  isiSawer(d, h); terapkanIklan();
   if (CFG.instagram_url) { $('#ig').href = CFG.instagram_url; $('#ig').style.display = ''; } }
 
 let _toastT = 0;
@@ -1453,6 +1453,70 @@ async function cekOnline() { if (!CFG.main_url || document.hidden) return;
 document.addEventListener('visibilitychange', () => { if (document.hidden) { if (MP.peran === 'lihat') { MP.mau = false; tutupWs(); } } else if (!JL.aktif) buka('lihat'); });
 tampilTangkapan();
 
+/* ================= MITRA / SPONSOR UMKM: papan reklame & kios di pulau ================= */
+/* Data dari config.json → "sponsor": [{slot, nama, slogan, warna, link}] . slot: pantai | gerbang | lumbung | kebun | kios1 | kios2
+   Semua iklan berlabel IKLAN. Slot kosong = "Ruang iklan tersedia · DM Instagram". Nama & slogan disaring sensorTeks. */
+const SLOT_IKLAN = [
+  {id: 'pantai', x: -3.9, z: 18.5, jenis: 'papan', hadap: [0, 80]}, {id: 'gerbang', x: -11, z: -10, jenis: 'papan', hadap: [-10, 40]},
+  {id: 'lumbung', x: -9, z: -32, jenis: 'papan', hadap: [-10, 20]}, {id: 'kebun', x: -58, z: -13, jenis: 'papan', hadap: [-40, 30]},
+  {id: 'kios1', x: -24, z: -24, jenis: 'kios', hadap: PUSAT_KOTA}, {id: 'kios2', x: -35.1, z: -26.2, jenis: 'kios', hadap: PUSAT_KOTA}];
+const IKLAN = [];   /* {slot, g, kena (mesh untuk diklik), sp (data sponsor atau null)} */
+function teksIklan(sp, lebar, tinggiK, kios) { const c = kanvas(lebar, tinggiK), x = c.getContext('2d'), ig = igHandle();
+  const warna = sp && /^#[0-9a-fA-F]{6}$/.test(sp.warna || '') ? sp.warna : '#FFF8EC';
+  x.fillStyle = sp ? warna : '#FFF8EC'; x.fillRect(0, 0, lebar, tinggiK);
+  x.strokeStyle = '#2B2238'; x.lineWidth = 18; x.strokeRect(9, 9, lebar - 18, tinggiK - 18); x.textAlign = 'center'; x.textBaseline = 'middle';
+  const terang = sp ? (parseInt(warna.slice(1, 3), 16) * .3 + parseInt(warna.slice(3, 5), 16) * .59 + parseInt(warna.slice(5, 7), 16) * .11) > 140 : true, tinta = terang ? '#2B2238' : '#FFFFFF';
+  if (sp) { const nama = sensorTeks(sp.nama || '').slice(0, 28), slogan = sensorTeks(sp.slogan || '').slice(0, 48);
+    x.fillStyle = tinta; x.font = `700 ${kios ? 96 : 120}px 'Fredoka', sans-serif`; x.fillText(nama, lebar / 2, tinggiK * (slogan ? .42 : .5), lebar - 80);
+    if (slogan) { x.font = `600 ${kios ? 52 : 60}px 'Fredoka', sans-serif`; x.fillText(slogan, lebar / 2, tinggiK * .72, lebar - 90); }
+    x.fillStyle = '#2B2238'; x.fillRect(lebar - 150, 24, 126, 50); x.fillStyle = '#FFD447'; x.font = "700 34px 'Fredoka', sans-serif"; x.fillText('IKLAN', lebar - 87, 50); }
+  else { x.setLineDash([26, 18]); x.lineWidth = 8; x.strokeStyle = '#B9A98C'; x.strokeRect(46, 46, lebar - 92, tinggiK - 92); x.setLineDash([]);
+    x.fillStyle = '#2B2238'; x.font = `700 ${kios ? 70 : 86}px 'Fredoka', sans-serif`; x.fillText(kios ? 'Kios Mitra' : 'Ruang Iklan Tersedia', lebar / 2, tinggiK * .4, lebar - 120);
+    x.fillStyle = '#5A4E68'; x.font = `600 ${kios ? 44 : 52}px 'Fredoka', sans-serif`; x.fillText(`UMKM? DM Instagram ${ig}`, lebar / 2, tinggiK * .66, lebar - 120); }
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; return t; }
+function buatPapan(slot) { const g = new THREE.Group(), kayu = MAT('#8A5A3A');
+  [-1, 1].forEach(s => tb(.16, 4.4, kayu, s * 2.6, 2.2, 0, g, 1.12));
+  const papan = balok(6.4, 3.2, .3, MAT('#FFF8EC'), 0, 5.2, 0, g, 1.04); const muka = new THREE.Mesh(new THREE.PlaneGeometry(6.1, 2.9), new THREE.MeshBasicMaterial({toneMapped: false}));
+  muka.position.set(0, 5.2, .16); g.add(muka); const atap = balok(6.8, .22, .7, MAT('#E8494A'), 0, 6.92, 0, g, 1.06);
+  return {g, muka, kena: [papan, muka]}; }
+function buatKios(slot) { const g = new THREE.Group(), kayu = MAT('#B5652A');
+  balok(3.6, 1.2, 1.8, MAT('#F2D2A8'), 0, .6, 0, g, 1.04); balok(3.8, .16, 2, kayu, 0, 1.28, 0, g, 1.05);   /* meja jualan */
+  [-1, 1].forEach(s => tb(.09, 2.6, kayu, s * 1.75, 2.3, -.7, g, 1.15)); [-1, 1].forEach(s => tb(.09, 2.2, kayu, s * 1.75, 2.1, .85, g, 1.15));
+  for (let i = 0; i < 6; i++) { const a = balok(.64, .14, 2.3, MAT(i % 2 ? '#FFFFFF' : '#E8494A'), -1.6 + i * .64, 3.32, .1, g, 1.03); a.rotation.x = .28; }   /* tenda belang */
+  const papan = balok(3.6, 1, .16, MAT('#FFF8EC'), 0, 4.05, -.6, g, 1.06); const muka = new THREE.Mesh(new THREE.PlaneGeometry(3.4, .86), new THREE.MeshBasicMaterial({toneMapped: false}));
+  muka.position.set(0, 4.05, -.51); g.add(muka);
+  [[-1.1, '#FF8A2A'], [-.4, '#7ED957'], [.4, '#FFD447'], [1.1, '#FF8AB0']].forEach(([x, w]) => bb(.22, MAT(w), x, 1.5, .3, 1, .8, 1, g, 1.08));   /* dagangan */
+  return {g, muka, kena: [papan, muka]}; }
+SLOT_IKLAN.forEach(s => { const b = s.jenis === 'kios' ? buatKios(s) : buatPapan(s); b.g.position.set(s.x, tanah(s.x, s.z) - .05, s.z);
+  b.g.rotation.y = Math.atan2(s.hadap[0] - s.x, s.hadap[1] - s.z); scene.add(b.g); BENDA.push([s.x, s.z, s.jenis === 'kios' ? 2.1 : 2.9]);
+  IKLAN.push({slot: s, g: b.g, muka: b.muka, kena: b.kena, sp: null, kios: s.jenis === 'kios'}); });
+function terapkanIklan() { const daftar = (CFG.sponsor || []).filter(sp => sp && sp.nama);
+  IKLAN.forEach(I => { const sp = daftar.find(x => x.slot === I.slot.id) || null, kunci = JSON.stringify(sp) + igHandle(); if (I._k === kunci) return; I._k = kunci; I.sp = sp;
+    if (I.muka.material.map) I.muka.material.map.dispose(); I.muka.material.map = teksIklan(sp, I.kios ? 1024 : 1024, I.kios ? 256 : 512, I.kios); I.muka.material.needsUpdate = true; });
+  const w = $('#mitra'); w.innerHTML = ''; daftar.forEach(sp => { const a = document.createElement(sp.link ? 'a' : 'span'); a.className = 'chip mitraChip';
+    if (sp.link && /^https?:\/\//.test(sp.link)) { a.href = sp.link; a.target = '_blank'; a.rel = 'sponsored noopener'; }
+    a.innerHTML = `<b>${escHtml(sensorTeks(sp.nama))}</b>${sp.slogan ? ' · ' + escHtml(sensorTeks(sp.slogan)) : ''} <i class="lblIklan">Iklan</i>`; w.appendChild(a); });
+  $('#mitraKosong').style.display = daftar.length ? 'none' : ''; $('#mitraIg').textContent = igHandle(); }
+/* klik papan/kios di layar → kartu sponsor */
+const _ray = new THREE.Raycaster(), _ptr = new THREE.Vector2(); let _turun = null;
+el.addEventListener('pointerdown', e => { _turun = [e.clientX, e.clientY]; });
+el.addEventListener('pointerup', e => { if (!_turun || Math.hypot(e.clientX - _turun[0], e.clientY - _turun[1]) > 6) return; const r = el.getBoundingClientRect();
+  _ptr.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); _ray.setFromCamera(_ptr, cam);
+  const kena = _ray.intersectObjects(IKLAN.flatMap(I => I.kena), false)[0]; if (!kena || kena.distance > 140) return;
+  const I = IKLAN.find(I => I.kena.includes(kena.object)); if (I) bukaIklan(I); });
+function bukaIklan(I) { const sp = I.sp, ig = igHandle();
+  $('#iklanJudul').textContent = sp ? sensorTeks(sp.nama) : (I.kios ? 'Kios Mitra tersedia' : 'Ruang iklan tersedia');
+  $('#iklanIsi').innerHTML = sp ? `${escHtml(sensorTeks(sp.slogan || ''))}<br><span class="kecilAbu">Iklan · mitra Kota Bhinneka</span>`
+    : `Usaha kamu bisa tampil di Pulau Nusantara: ${I.kios ? 'kios dengan nama usahamu' : 'papan reklame besar'}, terlihat di website & video Kota Binatang.<br><b>DM Instagram ${escHtml(ig)}</b> untuk kerja sama.`;
+  const a = $('#iklanLink'); if (sp && sp.link && /^https?:\/\//.test(sp.link)) { a.href = sp.link; a.style.display = ''; } else if (!sp && CFG.instagram_url) { a.href = CFG.instagram_url; a.innerHTML = ikon('kirim') + ' DM Instagram'; a.style.display = ''; } else a.style.display = 'none';
+  if (sp) a.innerHTML = ikon('kirim') + ' Kunjungi'; $('#modalIklan').classList.add('on'); bunyi('pop'); }
+$('#tutupIklan').addEventListener('click', () => $('#modalIklan').classList.remove('on'));
+$('#modalIklan').addEventListener('click', e => { if (e.target.id === 'modalIklan') $('#modalIklan').classList.remove('on'); });
+/* jalan-jalan: lewat dekat papan bersponsor → pesan singkat sekali */
+let _iklanDekat = null;
+function langkahIklan() { if (!JL.aktif) return; const I = IKLAN.find(I => I.sp && Math.hypot(JL.x - I.slot.x, JL.z - I.slot.z) < 7);
+  if (I && I !== _iklanDekat) toast(`Iklan · ${sensorTeks(I.sp.nama)}${I.sp.slogan ? ' — ' + sensorTeks(I.sp.slogan) : ''}`); _iklanDekat = I || null; }
+
 /* ================= NPC: warga ber-KTP yang "hidup" di pulau saat pemiliknya tidak online ================= */
 /* Maks 20 NPC dipilih acak dari data KTP. Jumlahnya dikurangi warga yang sedang online (main bareng);
    bila yang online ≥ 20, semua NPC berhenti sementara dan pulau diisi warga online. Disimulasikan di tiap browser. */
@@ -1747,7 +1811,7 @@ document.addEventListener('click', e => { if (e.target.closest('button, .tombolK
 /*================= LOOP ================= */
 let t0 = performance.now(), tl = t0;
 function loop(now) { const t = (now - t0) / 1000, dt = clamp((now - tl) / 1000, 0, .05); tl = now; tAnim = t; diam += dt;
-  if (JL.aktif) langkahJelajah(t, dt); langkahBareng(t, dt); langkahSemuaNpc(t, dt); langkahEfek(); if (!JL.aktif && BEBAS.aktif) langkahBebas(t, dt); else if (!JL.aktif) {
+  if (JL.aktif) langkahJelajah(t, dt); langkahBareng(t, dt); langkahSemuaNpc(t, dt); langkahEfek(); langkahIklan(); if (!JL.aktif && BEBAS.aktif) langkahBebas(t, dt); else if (!JL.aktif) {
   if (diam > 8 && !jari.size) ORB_T.th += dt * .03 * Math.cos(t * .05);           // goyang pelan kiri-kanan
   const k = 1 - Math.exp(-dt * 5); ORB.th = lerp(ORB.th, ORB_T.th, k); ORB.ph = lerp(ORB.ph, ORB_T.ph, k); ORB.r = lerp(ORB.r, ORB_T.r, k); ORB.tgt.lerp(ORB_T.tgt, k);
   cam.position.set(ORB.tgt.x + Math.sin(ORB.ph) * Math.sin(ORB.th) * ORB.r, ORB.tgt.y + Math.cos(ORB.ph) * ORB.r, ORB.tgt.z + Math.sin(ORB.ph) * Math.cos(ORB.th) * ORB.r);
