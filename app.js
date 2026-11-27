@@ -324,7 +324,7 @@ const papan = tekstur(256, 256, (x, w, h) => { x.fillStyle = '#D69A5B'; x.fillRe
 const KAYU = MAT('#FFFFFF', {map: papan}), KAYU2 = MAT('#B87A42');
 /* ---------- KOTA BHINNEKA: tempat & bangunan (koordinat sama dengan website) ---------- */
 const JK = [-1.2, 25.4], AG = [1.2, 25.4], KAS_P = [-3.5, 26.8], PAPAN_P = [0.2, 21.6];
-const GERBANG_POS = [-18, -15], GERBANG_ARAH = .47, LUMBUNG_POS = [-16, -26], LUMBUNG_ARAH = -1.2, PUSAT_KOTA = [-30, -40], KEBUN_POS = [-44, -27];
+const GERBANG_POS = [-18, -15], GERBANG_ARAH = .47, LUMBUNG_POS = [-16, -26], LUMBUNG_ARAH = -1.2, PUSAT_KOTA = [-30, -40], KEBUN_POS = [-50, -21.5];
 const KELAPA_KOTA = [[-40, -6], [-43.5, -9.5], [-36.5, -9.5]];
 const CELAH = a => Math.abs(Math.atan2(Math.sin(a - Math.PI / 2), Math.cos(a - Math.PI / 2))) < .42;   /* celah lingkaran menghadap kamera */
 const FD = V(Math.sin(GERBANG_ARAH), 0, Math.cos(GERBANG_ARAH)), FK = V(FD.z, 0, -FD.x);   /* arah depan & kanan gerbang */
