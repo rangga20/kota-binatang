@@ -817,13 +817,15 @@ function letakTokoh(t) {
   pose(AGUS, {t, x: gx, y: tinggi(gx, z) + AGUS.alas * SKALA_TOKOH + Math.abs(Math.sin(t * 3 + 1)) * .12, z, yaw: -.1, senang: .9, la: [[0, .2], [0, .2 + Math.max(0, Math.sin(t * .9 + 1)) * 1.6]]}); }
 
 /* ================= DATA ================= */
-let CFG = {nilai_koin: {follow: 500, like: 100, share: 1000, repost: 2000, saweria: 5000}, followers_awal: 0, saweria: 0, instagram_url: ''};
+let CFG = {nilai_koin: {follow: 500, like: 100, share: 1000, repost: 2000, saweria: 5000, saweria_rp: 1}, followers_awal: 0, saweria: 0, instagram_url: '', saweria_url: '', target: {nama: 'Bangunan berikutnya (usulan warga)', koin: 100000}};
 let DATA = null, WARGA_N = -1, KTP_N = -1;
 const fmt = n => Math.round(n).toLocaleString('id-ID');
 const nomorKtp = no => 'KB-' + String(no).padStart(5, '0');
 function hitung(d) { const v = CFG.nilai_koin, ktp = d.ktp || [], ktpTotal = d.ktp_total || ktp.length, keluar = (CFG.pengeluaran || []).reduce((s, p) => s + (+p.koin || 0), 0);
   const pengikut = Math.max(0, (d.followers || 0) - (CFG.followers_awal || 0)), warga = pengikut + ktpTotal, saw = (d.saweria != null ? d.saweria : CFG.saweria) || 0;
-  const rinci = [['Follow', pengikut, v.follow], ['Like', d.likes || 0, v.like], ['Share', d.shares || 0, v.share], ['Repost', d.reposts || 0, v.repost], ['Saweria', saw, v.saweria]];
+  const rp = d.saweria_rp || 0, perRp = v.saweria_rp == null ? 1 : v.saweria_rp;
+  const rinci = [['Follow', pengikut, v.follow], ['Like', d.likes || 0, v.like], ['Share', d.shares || 0, v.share], ['Repost', d.reposts || 0, v.repost], ['Saweria', rp, perRp, `Rp${fmt(rp)}`]];
+  if (saw) rinci.push(['Saweria (dicatat manual)', saw, v.saweria]);
   const masuk = rinci.reduce((s, [, n, k]) => s + n * k, 0); return {warga, ktp, ktpTotal, masuk, keluar, kas: masuk - keluar, rinci}; }
 
 /* daftar yang tampil: warga ber-KTP dulu (dekat Joko), lalu warga acak */
@@ -847,10 +849,25 @@ function terapkan(d, awal) { DATA = d; const h = hitung(d), L = [];   /* kerumun
   WARGA_N = h.warga; KTP_N = h.ktpTotal;
   isiPanel(d, h); }
 
+/* ---------- SAWERIA: target pembangunan + papan penyokong + perayaan saweran baru ---------- */
+let SAWER_N = -1;
+function isiSawer(d, h) { const T = CFG.target || {}, tk = Math.max(1, +T.koin || 100000), isi = clamp(h.kas / tk, 0, 1);
+  $('#targetNama').textContent = T.nama || 'Bangunan berikutnya'; $('#barIsi').style.width = (isi * 100).toFixed(1) + '%';
+  $('#barTeks').textContent = isi >= 1 ? `Kas cukup! ${T.nama || 'Bangunan berikutnya'} dibangun di video berikutnya 🎉` : `${fmt(Math.max(0, h.kas))} / ${fmt(tk)} Koin · kurang ${fmt(tk - Math.max(0, h.kas))} Koin`;
+  const url = CFG.saweria_url || ''; $('#sawer').style.display = url ? '' : 'none'; $('#bSawer').href = url;
+  const P = d.penyokong || [], w = $('#penyokong'); w.innerHTML = ''; $('#judulPenyokong').style.display = P.length ? '' : 'none';
+  P.forEach(p => { const el = document.createElement('span'); el.className = 'chip sokong'; el.innerHTML = `${ikon('hati')} ${escHtml(p.nama)} · ${fmt(p.rp * (CFG.nilai_koin.saweria_rp ?? 1))} Koin`; w.appendChild(el); });
+  const n = d.saweria_n || 0; if (SAWER_N >= 0 && n > SAWER_N && P[0]) { toast(`Terima kasih ${P[0].nama}! +${fmt(P[0].rp * (CFG.nilai_koin.saweria_rp ?? 1))} Koin untuk kas kota`); kembangApi(); }
+  SAWER_N = n; }
+function kembangApi() { bunyi('ktp'); const [cx, cz] = PUSAT_KOTA, warna = ['#FF4D6A', '#FFD447', '#7ED957', '#3C8CFF', '#C69CFF', '#FF9A3C'];
+  for (let k = 0; k < 6; k++) { const x0 = cx + (Math.random() - .5) * 24, z0 = cz + (Math.random() - .5) * 18, y0 = tinggi(x0, z0) + 18 + Math.random() * 10, tunda = k * .45, w = warna[k % 6];
+    for (let i = 0; i < 22; i++) { const a = i / 22 * 6.283, b = (Math.random() - .5) * 2, s = spriteEmoji('✦', w, 200), v = 6 + Math.random() * 3;
+      tambahEfek(s, 2.2 + tunda, (o, q) => { const t = q * (2.2 + tunda) - tunda; o.visible = t > 0; if (t <= 0) return; const r = v * Math.min(1, t * 1.6);
+        o.position.set(x0 + Math.cos(a) * Math.cos(b) * r, y0 + Math.sin(b) * r - t * t * 2.2, z0 + Math.sin(a) * Math.cos(b) * r); const u = 1.6 * (1 - t / 2.2); o.scale.set(u, u, 1); o.material.opacity = 1 - t / 2.2; }); } } }
 function isiPanel(d, h) {
   $('#nWarga').textContent = fmt(h.warga); $('#nKas').textContent = fmt(h.kas); $('#nKtp').textContent = fmt(h.ktpTotal);
-  $('#rinci').innerHTML = ''; h.rinci.forEach(([nama, n, k]) => { const tr = document.createElement('tr');
-    [nama, `${fmt(n)} × ${fmt(k)}`, fmt(n * k)].forEach((s, i) => { const td = document.createElement('td'); td.textContent = s; if (i === 2) td.className = 'kn'; tr.appendChild(td); }); $('#rinci').appendChild(tr); });
+  $('#rinci').innerHTML = ''; h.rinci.forEach(([nama, n, k, lbl]) => { const tr = document.createElement('tr');
+    [nama, lbl || `${fmt(n)} × ${fmt(k)}`, fmt(n * k)].forEach((s, i) => { const td = document.createElement('td'); td.textContent = s; if (i === 2) td.className = 'kn'; tr.appendChild(td); }); $('#rinci').appendChild(tr); });
   const baris = (tb, sel, kelas) => { const tr = document.createElement('tr'); if (kelas) tr.className = kelas; sel.forEach((s, i) => { const td = document.createElement('td'); td.textContent = s; if (i === sel.length - 1) td.className = 'kn'; tr.appendChild(td); }); tb.appendChild(tr); };
   baris($('#rinci'), ['Total pemasukan', '', fmt(h.masuk)], 'total');
   const tk = $('#keluar'); tk.innerHTML = ''; (CFG.pengeluaran || []).forEach(p => baris(tk, [p.nama, '−' + fmt(+p.koin || 0)]));
@@ -868,6 +885,7 @@ function isiPanel(d, h) {
   const tg = d.diperbarui ? new Date(d.diperbarui) : null;
   $('#waktu').textContent = tg ? 'Diperbarui ' + tg.toLocaleString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'}) : '';
   $('#demo').style.display = d.demo ? '' : 'none'; $('#tunda').style.display = d.tertunda ? '' : 'none';
+  isiSawer(d, h);
   if (CFG.instagram_url) { $('#ig').href = CFG.instagram_url; $('#ig').style.display = ''; } }
 
 let _toastT = 0;

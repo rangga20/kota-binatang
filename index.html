@@ -135,6 +135,13 @@ tr.total td{font-weight:700;border-top:2px dashed #E3D6C4}
 #feedObrol{font-size:13.5px;line-height:1.4;display:flex;flex-direction:column;gap:4px}
 #feedObrol div{background:var(--krem);border-radius:10px;padding:4px 9px;overflow-wrap:anywhere}
 #nOnline.klik{cursor:pointer;text-decoration:underline dotted}
+.kotakSawer{margin-top:14px;background:#FFF1F4;border:3px solid var(--ink);border-radius:16px;padding:12px}
+.judulSawer{font-weight:700;font-size:15px;margin-bottom:8px}
+.sawerBtn{background:#FF8AB0!important;color:var(--ink)}
+.sawerBtn .ik .isi{fill:#E8494A}
+#penyokong{display:flex;flex-wrap:wrap;gap:6px}
+.chip.sokong{background:#FFE0EA}.chip.sokong .ik{color:#E8494A}
+#judulPenyokong{font-size:15px;margin:12px 0 6px}
 /* ---- ikon garis buatan sendiri ---- */
 .ik{width:1.2em;height:1.2em;vertical-align:-.24em;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .ik .isi{fill:currentColor;stroke:none}
@@ -233,6 +240,13 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
     <button id="bKtp" class="tombolKtp"><i data-ik="ktp"></i> Buat KTP Warga</button>
     <button id="bJalan" class="tombolKtp hijau" style="display:none"><i data-ik="tapak"></i> Jalan-jalan keliling pulau</button>
     <div id="nOnline" style="display:none"></div>
+    <div id="sawer" class="kotakSawer" style="display:none">
+      <div class="judulSawer"><i data-ik="pin"></i> Menuju: <b id="targetNama"></b></div>
+      <div class="bar"><div id="barIsi"></div></div><div id="barTeks"></div>
+      <a id="bSawer" class="tombolKtp sawerBtn" href="#" target="_blank" rel="noopener"><i data-ik="hati"></i> Sawer untuk kas kota</a>
+      <p class="kecilAbu">Setiap Rp1 saweran = 1 Koin untuk membangun Kota Bhinneka. Koin hanya poin permainan. Adik-adik, minta izin orang tua dulu ya.</p>
+      <h2 id="judulPenyokong" style="display:none">Terima kasih, penyokong!</h2><div id="penyokong"></div>
+    </div>
     <h2 id="feedJudul" style="display:none"><i data-ik="obrol"></i> Obrolan warga</h2>
     <div id="feedObrol"></div>
     <h2>Dari mana Koin datang</h2>
@@ -319,6 +333,6 @@ body.bersih:not(.jelajah) #bersihTombol{display:flex}
   </div>
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="app.js?v=15aaa1e3"></script>
+<script src="app.js?v=2185e761"></script>
 </body>
 </html>
