@@ -752,9 +752,16 @@ function hiasWarga(B, kep, J, o, w) { const gelap = M('#1E1A2A');
 
 
 /* papan nama di atas kepala warga ber-KTP */
-function papanNama(teks, y = 3.05) { const c = kanvas(512, 128), x = c.getContext('2d'); x.font = "700 64px 'Fredoka', sans-serif";
-  const w = Math.min(500, x.measureText(teks).width + 60); x.fillStyle = '#FFFFFF'; x.strokeStyle = '#2B2238'; x.lineWidth = 8;
-  x.beginPath(); x.roundRect((512 - w) / 2, 18, w, 92, 46); x.fill(); x.stroke(); x.fillStyle = '#2B2238'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(teks, 256, 66, 460);
+/* ===== PENYOKONG (saweran dengan nomor KTP): 1 Perunggu · 2 Perak · 3 Emas — hanya tampilan, bukan keunggulan permainan ===== */
+const SOKONG = [null, {n: 'Perunggu', w: '#E8A36A', w2: '#B8703A', g: ['#F6C79A', '#D88A50']}, {n: 'Perak', w: '#DDE3EE', w2: '#9AA6B8', g: ['#F4F7FC', '#B8C2D2']}, {n: 'Emas', w: '#FFD447', w2: '#E0A800', g: ['#FFE98A', '#F2B705']}];
+function tingkatKtp(no) { const k = DATA && (DATA.ktp || []).find(x => x.no === no); return k && k.sk ? Math.min(3, k.sk) : 0; }
+function hiasPenyokong(g, sk) { if (!sk) return; const S = SOKONG[sk], u = g.userData; u.sk = sk;
+  const lencana = new THREE.Group(); lencana.position.set(.26, .92, .52); u.B.add(lencana);   /* lencana bintang di dada */
+  const pita = bb(.07, M('#E8494A'), 0, .1, 0, 1, 1.3, .35, lencana, 1.1); const koin = tb(.14, .05, M(S.w), 0, -.06, .02, lencana, 1.15); koin.rotation.x = Math.PI / 2; bb(.06, M(S.w2), 0, -.06, .05, 1, 1, .4, lencana, 0); }
+function papanNama(teks, y = 3.05, sk = 0) { const c = kanvas(512, 128), x = c.getContext('2d'), S = SOKONG[sk]; x.font = "700 64px 'Fredoka', sans-serif";
+  const lbl = S ? '★ ' + teks : teks, w = Math.min(500, x.measureText(lbl).width + 60);
+  if (S) { const gr = x.createLinearGradient(0, 18, 0, 110); gr.addColorStop(0, S.g[0]); gr.addColorStop(1, S.g[1]); x.fillStyle = gr; } else x.fillStyle = '#FFFFFF'; x.strokeStyle = '#2B2238'; x.lineWidth = 8;
+  x.beginPath(); x.roundRect((512 - w) / 2, 18, w, 92, 46); x.fill(); x.stroke(); x.fillStyle = '#2B2238'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(lbl, 256, 66, 460);
   const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding;
   const s = new THREE.Sprite(new THREE.SpriteMaterial({map: t, transparent: true, depthWrite: false})); s.scale.set(2.2, .55, 1); s.position.y = y; return s; }
 
@@ -963,7 +970,7 @@ $('#kirimKtp').onclick = async () => { const nama = $('#namaKtp').value.trim().r
   finally { $('#kirimKtp').disabled = false; } };
 const opsiKtp = k => ({kelamin: k.kelamin || '', warna: k.warna || '', rambut: k.rambut || 'none', warnaRambut: k.warnaRambut || '', aksesori: k.aksesori || []});
 /* kartu KTP digambar di kanvas → bisa disimpan sebagai gambar */
-function gambarKartu(k) { const J = JENIS_ID[k.jenis] || JENIS[0], c = $('#kartu'), x = c.getContext('2d'), W2 = c.width, H2 = c.height;
+function gambarKartu(k) { const J = JENIS_ID[k.jenis] || JENIS[0], c = $('#kartu'), x = c.getContext('2d'), W2 = c.width, H2 = c.height, sk = k.sk || tingkatKtp(k.no), SK = SOKONG[sk];
   PRATINJAU.set(J, opsiKtp(k)); PRATINJAU.gambar(0, true);
   x.clearRect(0, 0, W2, H2); x.fillStyle = '#2B2238'; x.beginPath(); x.roundRect(0, 8, W2, H2 - 8, 40); x.fill();
   const g = x.createLinearGradient(0, 0, W2, H2); g.addColorStop(0, '#8FD3FF'); g.addColorStop(.55, '#BDEBD9'); g.addColorStop(1, '#FFE9B8'); x.fillStyle = g; x.beginPath(); x.roundRect(0, 0, W2, H2 - 8, 40); x.fill();
@@ -974,7 +981,8 @@ function gambarKartu(k) { const J = JENIS_ID[k.jenis] || JENIS[0], c = $('#kartu
   x.restore();
   x.lineWidth = 8; x.strokeStyle = '#2B2238'; x.beginPath(); x.roundRect(0, 0, W2, H2 - 8, 40); x.stroke();
   /* kepala kartu: kuning + garis merah gerbang Kota Bhinneka */
-  x.fillStyle = '#FFD447'; x.beginPath(); x.roundRect(0, 0, W2, 120, [40, 40, 0, 0]); x.fill(); x.stroke();
+  if (SK) { const gr = x.createLinearGradient(0, 0, W2, 120); gr.addColorStop(0, SK.g[0]); gr.addColorStop(.5, SK.g[1]); gr.addColorStop(1, SK.g[0]); x.fillStyle = gr; } else x.fillStyle = '#FFD447';   /* edisi penyokong: kepala kartu berwarna tingkatnya */
+  x.beginPath(); x.roundRect(0, 0, W2, 120, [40, 40, 0, 0]); x.fill(); x.stroke();
   x.fillStyle = '#E8494A'; x.fillRect(4, 112, W2 - 8, 10); x.fillStyle = '#2B2238'; x.fillRect(4, 122, W2 - 8, 4);
   /* lambang kota (kiri atas): perisai + tapak kaki */
   lukisLambang(x, 70, 60, 40); lukisLambang(x, W2 - 70, 60, 40);
@@ -987,9 +995,16 @@ function gambarKartu(k) { const J = JENIS_ID[k.jenis] || JENIS[0], c = $('#kartu
   const baris = [['NIK', nomorKtp(k.no)], ['Nama', k.nama], ['Jenis binatang', J.n], ['Jenis kelamin', kel], ['Warga sejak', new Date(k.t).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})]];
   baris.forEach(([a, b], i) => { const y = 188 + i * 64; x.fillStyle = '#5A4E68'; x.font = "600 26px 'Fredoka', sans-serif"; x.fillText(a, 380, y); x.fillStyle = '#2B2238'; x.font = "700 36px 'Fredoka', sans-serif"; x.fillText(b, 380, y + 36, 430); });
   lukisHologram(x, W2 - 120, 430, 78, k.no * .7);   /* segel hologram berkilau (kanan bawah) */
+  if (SK) {   /* pita edisi penyokong + bingkai berwarna tingkat */
+    x.save(); x.lineWidth = 14; x.strokeStyle = SK.w2; x.beginPath(); x.roundRect(10, 10, W2 - 20, H2 - 28, 32); x.stroke(); x.restore();
+    const gr = x.createLinearGradient(380, 0, 820, 0); gr.addColorStop(0, SK.g[1]); gr.addColorStop(.5, SK.g[0]); gr.addColorStop(1, SK.g[1]);
+    x.fillStyle = gr; x.strokeStyle = '#2B2238'; x.lineWidth = 5; x.beginPath(); x.roundRect(378, 516, 420, 46, 23); x.fill(); x.stroke();
+    x.fillStyle = '#2B2238'; x.textAlign = 'center'; x.font = "700 24px 'Fredoka', sans-serif"; x.fillText(`★ EDISI ${SK.n.toUpperCase()} · ${sk === 3 ? 'WARGA KEHORMATAN' : 'PENYOKONG KOTA'} ★`, 588, 547, 400);
+    if (sk === 3) { x.save(); x.globalAlpha = .45; x.strokeStyle = '#FFD447'; x.lineWidth = 10; x.beginPath(); x.arc(W2 - 120, 430, 86, 0, 6.283); x.stroke(); x.restore(); } }
   x.fillStyle = '#2B2238'; x.font = "500 22px 'Fredoka', sans-serif"; x.textAlign = 'center'; x.fillText('KTP fiktif untuk permainan · bukan dokumen resmi · Koin bukan Rupiah', W2 / 2, H2 - 34);
   $('#unduhKtp').href = c.toDataURL('image/png'); $('#unduhKtp').download = `KTP-${nomorKtp(k.no)}-${k.nama.replace(/[^\w-]+/g, '_')}.png`;
-  $('#ktpku').innerHTML = `${ikon('j_' + J.id)} ${escHtml(k.nama)} · ${nomorKtp(k.no)}`; }
+  $('#ktpku').innerHTML = `${ikon('j_' + J.id)} ${escHtml(k.nama)} · ${nomorKtp(k.no)}`;
+  $('#infoSokong').innerHTML = SK ? `★ KTP-mu <b>Edisi ${SK.n}</b>. Terima kasih sudah menyokong Kota Bhinneka!` : (CFG.saweria_url ? `Mau KTP edisi Perunggu/Perak/Emas? Tulis <b>${nomorKtp(k.no)}</b> di pesan saweran lewat <a href="${CFG.saweria_url}" target="_blank" rel="noopener">Saweria</a> (minta izin orang tua dulu ya).` : ''); }
 { const s = JSON.parse(localStorage.getItem(KTP_SIMPAN) || 'null'); if (s) { $('#bKtp').innerHTML = ikon('ktp') + ' Lihat KTP-ku'; } }
 
 /* ================= KAMERA (geser putar, cubit/scroll zoom) ================= */
@@ -1036,7 +1051,7 @@ function tampilTombolJalan() { const ada = !!ktpSaya(); $('#bJalan').style.displ
 function mulaiJelajah() { const k = ktpSaya(); if (!k) { bukaKtp(); return; }
   $('#modal').classList.remove('on'); selesaiBebas(); document.body.classList.remove('bersih');
   if (JL.g) scene.remove(JL.g);
-  JL.g = buatBinatang(JENIS_ID[k.jenis] || JENIS[0], rng(k.no * 131 + 7), opsiKtp(k)); JL.g.scale.setScalar(SKALA_WARGA); JL.g.add(papanNama(k.nama, JL.g.userData.atas)); scene.add(JL.g);
+  JL.g = buatBinatang(JENIS_ID[k.jenis] || JENIS[0], rng(k.no * 131 + 7), opsiKtp(k)); JL.g.scale.setScalar(SKALA_WARGA); const skS = tingkatKtp(k.no); JL.g.add(papanNama(k.nama, JL.g.userData.atas, skS)); hiasPenyokong(JL.g, skS); scene.add(JL.g);
   JL.kunciSaya = 'k' + k.no + '{'; JL.x = PUSAT_KOTA[0] + (Math.random() - .5) * 3; JL.z = PUSAT_KOTA[1] + 9 + Math.random() * 1.5;   /* sedikit acak supaya pemain bareng tidak bertumpuk */ JL.y = tanahJalan(JL.x, JL.z); JL.vy = 0; JL.arah = Math.PI; JL.kamYaw = Math.PI; JL.kamPitch = .32; JL.jarak = 12; JL.sapa = false; JL.s = 0; JL.em = null; JL.ob = null; JL.alat = null; JL.no = k.no; berhentiMancing('');
   JL.aktif = true; document.body.classList.add('jelajah'); ukur(); toast(`Ayo jalan-jalan, ${k.nama}! 🐾`); sambungMP(); }
 function selesaiJelajah() { berhentiMancing(''); if (JL.alat) { scene.remove(JL.alat.garis, JL.alat.pel); JL.alat = null; } putusMP(); DEKAT = []; aturTajuk(0, 0, 0, 0, 0, 0); _hitDekat = 0; JL.aktif = false; document.body.classList.remove('jelajah'); ukur(); if (JL.g) { scene.remove(JL.g); JL.g = null; } diam = 0; }
@@ -1246,6 +1261,8 @@ function poseKarakter(p, t, dt, diUdara) { const u = p.g.userData, jalan = Math.
   if (p.s === 2) { u.lg[1].rotation.set(-1.05 + (p.tarikan || 0), 0, .05); u.lg[0].rotation.set(-.8, 0, .55); u.B.rotation.x = .05; }
   if (p.s === 3) { u.lg[1].rotation.set(-2.4, 0, .05); u.lg[0].rotation.set(-2.2, 0, -.05); u.B.rotation.x = -.15; }
   if (u.ekor) u.ekor.rotation.y = Math.sin(fase * (jalan ? 1 : .3) + t * 3) * .35;
+  if (u.sk >= 2) { p._kl = (p._kl || 0) - dt; if (p._kl <= 0) { p._kl = u.sk === 3 ? .22 : .5; const a = Math.random() * 6.28, r0 = .9 + Math.random() * .6, x0 = p.g.position.x + Math.cos(a) * r0 * 1.6, z0 = p.g.position.z + Math.sin(a) * r0 * 1.6, y0 = p.g.position.y + .5 + Math.random() * 3, s = spriteEmoji('✦', u.sk === 3 ? '#FFD447' : '#FFFFFF', 200);
+      tambahEfek(s, 1, (o, k) => { o.position.set(x0, y0 + k * .8, z0); const q = Math.sin(k * Math.PI) * .55; o.scale.set(q, q, 1); }); } }   /* kilau penyokong */
   if (u.sayap) { const k = .25 + (Math.sin(t * (jalan ? 14 : 5) + (p.no || 0)) * .5 + .5) * (jalan ? .9 : .5); u.sayap[0].rotation.y = k; u.sayap[1].rotation.y = -k; }   /* kupu-kupu mengepak */
   if (p.l > .6 && p.em && p.em.j === 'duduk') p.em = null;     /* bergerak = berdiri lagi */
   if (p.s !== 1 || !p.em || p.em.j === 'lambai' || p.em.j === 'hati' || p.em.j === 'sedih') poseEmote(p, u, t, dt);
@@ -1370,7 +1387,7 @@ function tutupWs() { clearTimeout(MP.jeda); if (MP.ws) { const w = MP.ws; MP.ws 
 function sambungMP() { buka('main'); }
 function putusMP() { MP.mau = false; tutupWs(); setTimeout(() => { if (!JL.aktif) buka('lihat'); }, 300); }
 function tambahTeman(p) { hapusTeman(p.no);
-  const g = buatBinatang(JENIS_ID[p.jenis] || JENIS[0], rng(p.no * 131 + 7), opsiKtp(p.gaya || {})); g.scale.setScalar(SKALA_WARGA); g.add(papanNama(p.nama, g.userData.atas)); scene.add(g);
+  const g = buatBinatang(JENIS_ID[p.jenis] || JENIS[0], rng(p.no * 131 + 7), opsiKtp(p.gaya || {})); g.scale.setScalar(SKALA_WARGA); const sk = tingkatKtp(p.no); g.add(papanNama(p.nama, g.userData.atas, sk)); hiasPenyokong(g, sk); scene.add(g);
   const q = {no: p.no, nama: p.nama, g, x: p.x, z: p.z, y: p.y || tanahJalan(p.x, p.z), a: p.a || 0, l: 0, s: p.s || 0, tuju: {x: p.x, z: p.z, y: p.y, a: p.a || 0, l: 0}, em: null, ob: null, alat: null};
   g.position.set(q.x, q.y, q.z); MP.pemain.set(p.no, q); }
 function hapusTeman(no) { const p = MP.pemain.get(no); if (p) { if (p.alat) scene.remove(p.alat.garis, p.alat.pel); scene.remove(p.g); MP.pemain.delete(no); } }
@@ -1460,7 +1477,7 @@ const TITIK = (() => { const kota = [], pantai = [], tepi = [], laut = [];
     ...KELAPA_KOTA.map(([x, z]) => [x + 2.2, z + 1.5]), ...[0, 1, 2, 3, 4, 5].map(i => [PUSAT_KOTA[0] + Math.cos(i * 1.05 + .3) * 6.2, PUSAT_KOTA[1] + Math.sin(i * 1.05 + .3) * 6.2])];
   return {kota: kota.concat(kegiatanKota), api: kegiatanKota.slice(-6), pantai, tepi, laut}; })();
 
-function buatNpc(k) { const g = buatBinatang(JENIS_ID[k.jenis] || JENIS[0], rng(k.no * 131 + 7), opsiKtp(k)); g.scale.setScalar(SKALA_WARGA); g.add(papanNama(k.nama, g.userData.atas)); scene.add(g);
+function buatNpc(k) { const g = buatBinatang(JENIS_ID[k.jenis] || JENIS[0], rng(k.no * 131 + 7), opsiKtp(k)); g.scale.setScalar(SKALA_WARGA); g.add(papanNama(k.nama, g.userData.atas, k.sk || 0)); hiasPenyokong(g, k.sk || 0); scene.add(g);
   const zona = TITIK.tepi.length && Math.random() < .3 ? 'pantai' : 'kota', awal = _acak(zona === 'pantai' ? TITIK.pantai.length ? TITIK.pantai : TITIK.kota : TITIK.kota);
   const p = {no: k.no, nama: k.nama, g, zona, x: awal[0], z: awal[1], y: tanahJalan(awal[0], awal[1]), a: Math.random() * 6.28, l: 0, s: 0, em: null, ob: null, alat: null,
     mode: 'diam', T: _rnd(.5, 3), tuju: null, cepat: _rnd(3.2, 5), aksi: '', lahir: tAnim};
